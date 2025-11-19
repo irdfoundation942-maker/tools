@@ -1,0 +1,328 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 340px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  background: #f8f9fa;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Container */
+.container {
+  padding: 18px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 16px;
+}
+
+.section.row-range-section {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.section.row-range-section .input-group {
+  flex: 1;
+  max-width: calc(100% - 100px);
+}
+
+/* Status Section */
+.status-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 3px;
+  gap: 8px;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 4px;
+}
+
+.status-label {
+  font-size: 11px;
+  color: #657786;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.status-value {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 600;
+  background: #f5f8fa;
+  padding: 5px 10px;
+  border-radius: 3px;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #e1e8ed;
+  margin: 18px 0;
+}
+
+/* Labels */
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+
+.row-range-section .label {
+  margin-right: 12px;
+}
+
+/* Input Group */
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.input-group input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 3px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.separator {
+  color: #a0aec0;
+  font-weight: 600;
+}
+
+/* Full Width Input */
+.input-full {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 3px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.input-full:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Custom Checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.checkbox-container:hover {
+  background: #f7fafc;
+}
+
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e0;
+  border-radius: 3px;
+  margin-right: 10px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-text {
+  font-size: 13px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Button Group */
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.btn {
+  padding: 11px 16px;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  background: #5568d3;
+  box-shadow: 0 3px 6px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: #e53e3e;
+  color: white;
+  box-shadow: 0 2px 4px rgba(229, 62, 62, 0.3);
+}
+
+.btn-secondary:hover {
+  background: #c53030;
+  box-shadow: 0 3px 6px rgba(229, 62, 62, 0.4);
+}
+
+.btn-outline {
+  background: white;
+  color: #4a5568;
+  border: 1px solid #cbd5e0;
+}
+
+.btn-outline:hover {
+  background: #f7fafc;
+  border-color: #a0aec0;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+}
+
+/* Status Message */
+.status-message {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #edf2f7;
+  border-left: 3px solid #667eea;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #4a5568;
+  min-height: 20px;
+  line-height: 1.5;
+}
+
+/* Countdown Section */
+.countdown-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.countdown-label {
+  font-size: 13px;
+  color: white;
+  font-weight: 600;
+}
+
+.countdown-timer {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 20px;
+  min-width: 60px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SEMrush KW Scraper - Options</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: system-ui, Arial; margin: 20px; }
+    textarea { width: 100%; height: 140px; }
+    .row { margin: 10px 0; }
+    label { display:block; margin-bottom:6px; font-weight:600; }
+    button { padding:8px 14px; }
+    .log { white-space: pre-wrap; background:#f7f7f9; border:1px solid #ddd; padding:10px; height:120px; overflow:auto; }
+  </style>
+  <script defer src="options.js"></script>
+  </head>
+<body>
+  <div class="container" style="max-width:400px; min-width:320px; margin:0 auto;">
+
+
+    <div class="card" style="max-width:400px;">
+      <div class="row">
+        <div style="margin-bottom:8px;">
+          <span id="urlCount">0 URLs loaded</span>
+          <span id="completeCount" style="margin-left:16px; color:#22c55e;">Complete: 0</span>
+          <span id="errorCount" style="margin-left:16px; color:#ef4444;">Error: 0</span>
+        </div>
+        <button class="btn ghost" id="clearBtn" title="Clear list">Clear</button>
+      </div>
+      <div class="row">
+        <div>Progress</div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <div>Status: <span id="status">Idle</span></div>
+      </div>
+      <div class="row">
+        <label for="startRowInput">Start from row:</label>
+        <input type="number" id="startRowInput" min="1" value="1" style="width:100%;max-width:120px;" />
+      </div>
+      <div class="row">
+        <button class="btn secondary" id="fetchGoogleBtn" style="margin-top:8px">Fetch Google Competitors</button>
+      </div>
+      <div class="row stack">
+        <button class="btn" id="startBtn">Start</button>
+        <button class="btn danger" id="stopBtn">Stop</button>
+        <button class="btn secondary" id="downloadBtn">Download</button>
+        <button class="btn primary" id="fetchAndStartBtn">Fetch and Start</button>
+        <button class="btn ghost" id="clearScrapedBtn" title="Clear scraped data">Clear Scraped Data</button>
+      </div>
+      <div class="row">
+        <span id="storageCount" style="color:#0ea5e9; font-weight:bold;">Store data: 0</span>
+      </div>
+      <div class="row">
+        <div style="width: 100%; overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+              <tr style="border-bottom: 1px solid #ddd;">
+                <th style="padding: 8px; text-align: left;">Status</th>
+                <th style="padding: 8px; text-align: left;">URL</th>
+                <th style="padding: 8px; text-align: center;">Countries</th>
+              </tr>
+            </thead>
+            <tbody id="extractionStatusTableBody">
+              <tr>
+                <td colspan="3" style="padding:8px; color:#666; text-align:center;">No links processed yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        width: 400px;
+        padding: 25px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      }
+      h2 {
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+        font-size: 22px;
+        margin-bottom: 25px;
+      }
+      .button-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      button {
+        flex: 1;
+        padding: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+      }
+      button:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      #pauseBtn {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        display: none;
+      }
+      #pauseBtn:hover {
+        box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+      }
+      #downloadBtn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        display: none;
+      }
+      #downloadBtn:hover {
+        box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+      }
+      .progress-container {
+        margin-bottom: 20px;
+        display: none;
+      }
+      .progress-bar-bg {
+        width: 100%;
+        height: 30px;
+        background-color: #f0f0f0;
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      .progress-text {
+        text-align: center;
+        margin-top: 10px;
+        color: #555;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      #status {
+        padding: 12px;
+        border-radius: 8px;
+        display: none;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 15px;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+      }
+      .file-info {
+        background-color: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        color: #555;
+        text-align: center;
+        border: 1px solid #dee2e6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🔍 Competitor URL Extractor</h2>
+      <div class="csv-section" style="margin-bottom:15px;text-align:center;">
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+        <button id="loadCSVBtn">📁 Load CSV (City,Keyword)</button>
+      </div>
+      <!-- Expected CSV format:
+      City,Keyword
+      Toronto,prayer times toronto
+      Mississauga,maghrib time mississauga
+      -->
+      <div class="file-info" id="urlsLoadedDisplay">0 competitor URLs loaded</div>
+      <div class="file-info" id="fileInfo">Loading input.csv.csv...</div>
+      <div class="button-row">
+        <button id="startBtn">Start Extraction</button>
+        <button id="pauseBtn">Pause</button>
+      </div>
+      <div class="button-row">
+        <button id="clearBtn">Clear URLs</button>
+        <button id="downloadBtn">Download Extracted Data</button>
+      </div>
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar-bg">
+          <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        <div class="progress-text" id="progressText">Preparing...</div>
+      </div>
+      <div id="status"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

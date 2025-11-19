@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Ai studio data scrapper",
+  "version": "1.0",
+  "description": "Automates city data collection from AI Studio with Google Search grounding",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://aistudio.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Studio City Data Collector"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["xlsx.full.min.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["input.csv", "input (1).xlsx", "system_prompt.txt"],
+      "matches": ["https://aistudio.google.com/*"]
+    }
+  ]
+}

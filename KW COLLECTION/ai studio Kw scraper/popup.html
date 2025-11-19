@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 300px;
+            padding: 18px 12px 12px 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fafbfc;
+            color: #222;
+            margin: 0;
+        }
+        
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 18px 14px 14px 14px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        
+        h1 {
+            margin: 0 0 16px 0;
+            font-size: 16px;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .status {
+            margin: 10px 0 12px 0;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #666;
+            min-height: 18px;
+            text-align: center;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        .progress {
+            margin: 10px 0 6px 0;
+            background: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 6px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0 10px 0;
+            font-size: 12px;
+            opacity: 0.85;
+        }
+        
+        .section {
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        label {
+            font-size: 13px;
+            color: #333;
+            margin-right: 8px;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            font-size: 13px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 10px 0 0 0;
+        }
+        
+        button {
+            padding: 8px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: #f5f5f5;
+            color: #222;
+            min-width: 54px;
+            transition: background 0.2s;
+        }
+        
+        button:active {
+            background: #e0e0e0;
+        }
+        
+        .run-btn {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .run-btn:active {
+            background: #388e3c;
+        }
+        
+        .run-btn:disabled {
+            background: #bdbdbd;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        
+        .download-btn {
+            background: #2196F3;
+            color: #fff;
+        }
+        
+        .download-btn:active {
+            background: #1565c0;
+        }
+        
+        .clear-btn {
+            background: #9e9e9e;
+            color: #fff;
+        }
+        
+        .clear-btn:active {
+            background: #616161;
+        }
+        
+        .stop-btn {
+            background: #f44336;
+            color: #fff;
+        }
+        
+        .stop-btn:active {
+            background: #d32f2f;
+        }
+        
+        #autoDownloadInfo {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Studio City Collector</h1>
+        <div class="section">
+            <div class="status" id="status">Ready to start</div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="stats">
+                <span id="currentCity">-</span>
+                <span id="progress">0/0</span>
+            </div>
+        </div>
+        <div class="section">
+            <label for="startRowInput">Start from row:</label>
+            <input type="number" id="startRowInput" min="1" value="1">
+        </div>
+        <div class="section">
+            <label for="numberOfTabs">Number of Tabs:</label>
+            <input type="number" id="numberOfTabs" min="1" max="10" value="1">
+            <div style="font-size: 11px; color: #888; margin-top: 4px;">Process in parallel across 1-10 tabs (each uses different Google profile)</div>
+        </div>
+        <div class="section">
+            <label for="repetitionCount">Repetition count:</label>
+            <input type="number" id="repetitionCount" min="1" max="10" value="1">
+            <div style="font-size: 11px; color: #888; margin-top: 4px;">Process each input 1-10 times</div>
+            <div style="margin-top: 8px;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="useDynamicBatch" style="margin-right: 6px;">
+                    <span style="font-size: 12px;">Use repetition count as batch size</span>
+                </label>
+            </div>
+            <div style="margin-top: 8px;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="autoCopyResponse" style="margin-right: 6px;">
+                    <span style="font-size: 12px;">Auto-copy AI response as text</span>
+                </label>
+            </div>
+            <div class="setting-item" style="margin-top:8px;">
+                <label for="keywordBatchSize">Keywords per Prompt:</label>
+                <input type="number" id="keywordBatchSize" min="1" max="10000" value="5" style="margin-left:8px; width:70px;">
+                <div style="font-size:11px; color:#888; margin-top:4px;">How many keywords to send in one prompt (default: 5)</div>
+            </div>
+        </div>
+        <div class="section">
+            <label for="excelFileInput">Upload Excel File:</label>
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls" />
+            <span id="fileStatus" style="font-size: 12px; color: #666;"></span>
+        </div>
+        <div class="section">
+            <div class="stats">
+                <span id="storageCount">Stored rows: 0</span>
+                <button id="clearBtn" class="clear-btn" style="padding: 4px 10px; font-size: 12px;">Clear</button>
+            </div>
+            <div id="autoDownloadInfo">Auto-download enabled when storage reaches limit</div>
+        </div>
+        <div class="button-group">
+            <button id="runBtn" class="run-btn">Run</button>
+            <button id="stopBtn" class="stop-btn" style="background: #f44336; color: #fff;">Stop</button>
+            <button id="downloadBtn" class="download-btn">Download</button>
+        </div>
+    </div>
+    
+    <script src="xlsx.full.min.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

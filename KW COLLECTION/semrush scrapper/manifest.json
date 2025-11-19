@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "URLs Extractor and SEMrush KW Scraper",
+  "version": "1.0.0",
+  "description": "Loads site URLs into SEMrush, scrapes Keyword/Volume/Traffic, paginates twice, and exports CSV.",
+  "permissions": [
+    "tabs",
+    "storage", 
+    "scripting",
+    "downloads",
+    "downloads.shelf"
+  ],
+  "host_permissions": [
+    "https://*.semrush.com/*",
+    "https://smrs2.digitavision.com/*",
+    "https://smrs.digitavision.com/*",
+    "https://smrs1.digitavision.com/*",
+    "https://smrs4.digitavision.com/*",
+    "https://www.google.com/search*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_title": "SEMrush KW Scraper",
+    "default_popup": "options.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.semrush.com/analytics/organic/*",
+        "https://smrs2.digitavision.com/analytics/organic/*",
+        "https://smrs.digitavision.com/analytics/organic/*",
+        "https://smrs1.digitavision.com/analytics/organic/*",
+        "https://smrs4.digitavision.com/analytics/organic/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.google.com/search*"],
+      "js": ["google_content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["input.csv", "input.csv.csv", "Urls-2025-10-13-09-46-11.csv"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+

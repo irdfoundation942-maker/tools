@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Keyword Planner Scraper",
+  "version": "1.0",
+  "description": "Scrapes keyword data from Google Ads Keyword Planner and exports to CSV format",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://ads.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://ads.google.com/aw/keywordplanner/*",
+        "https://ads.google.com/aw/keywordplanner/home*",
+        "https://ads.google.com/aw/keywordplanner/ideas/new*",
+        "https://ads.google.com/aw/overview*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["Input KW planner - Sheet1.csv"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

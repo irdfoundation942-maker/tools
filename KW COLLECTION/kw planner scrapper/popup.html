@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Keyword Planner Scraper</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Status Section -->
+      <div class="section status-section">
+        <div class="status-item">
+          <span class="status-label">KWs Loaded:</span>
+          <span id="keywordsLoadedBtn" class="status-value">0</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Results Stored:</span>
+          <span id="scrapedResultsBtn" class="status-value">0</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Progress:</span>
+          <span id="processStatusBtn" class="status-value">0/0</span>
+        </div>
+      </div>
+
+      <!-- Countdown Section -->
+      <div id="countdownSection" class="section countdown-section" style="display: none;">
+        <div class="countdown-label">⏱️ Auto-Download Timer:</div>
+        <div class="countdown-timer" id="countdownTimer">60s</div>
+      </div>
+
+      <!-- Configuration Section -->
+      <div class="section row-range-section">
+        <label class="label">Row Range</label>
+        <div class="input-group">
+          <input type="number" id="startRow" placeholder="Start" min="0" />
+          <span class="separator">-</span>
+          <input type="number" id="endRow" placeholder="End" min="0" />
+        </div>
+      </div>
+
+      <div class="section">
+        <label class="label">Keywords per Search</label>
+        <input
+          type="number"
+          id="keywordsPerSearch"
+          value="1"
+          min="1"
+          max="10"
+          class="input-full"
+        />
+      </div>
+
+      <div class="section">
+        <label class="label">Extract Keywords From:</label>
+        <label class="checkbox-container">
+          <input type="checkbox" id="extractProvidedKeywords" checked />
+          <span class="checkmark"></span>
+          <span class="checkbox-text">Keywords you provided</span>
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox" id="extractKeywordIdeas" checked />
+          <span class="checkmark"></span>
+          <span class="checkbox-text">Keyword Ideas</span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Action Buttons -->
+      <div class="button-group">
+        <button id="startBtn" class="btn btn-primary">Start</button>
+        <button id="stopBtn" class="btn btn-secondary">Stop</button>
+      </div>
+
+      <div class="button-group">
+        <button id="downloadBtn" class="btn btn-outline">Download</button>
+        <button id="clearBtn" class="btn btn-outline">Clear Data</button>
+      </div>
+
+      <!-- Status Message -->
+      <div id="status" class="status-message"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
