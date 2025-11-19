@@ -1,0 +1,36 @@
+2025-11-11 15:58:40 - 
+==================================================
+2025-11-11 15:58:40 - \U0001f4c2 CSV & EXCEL FILE MERGER
+2025-11-11 15:58:40 - ==================================================
+2025-11-11 15:58:40 - 
+\U0001f50d Searching for files...
+2025-11-11 15:58:40 - ==================================================
+2025-11-11 15:58:40 - \u2713 Found 4 file(s) in c:\Users\seo1i\Downloads\MERGED CSV-XL\DAY-WISE
+2025-11-11 15:58:40 - 
+\U0001f4ca Total files to process: 4
+2025-11-11 15:58:40 - ==================================================
+2025-11-11 15:58:40 - 
+[1/4] Processing: keyword_results (83).xlsx
+2025-11-11 15:58:41 -   \u2713 Loaded 840 rows, 5 columns
+2025-11-11 15:58:41 - 
+[2/4] Processing: keyword_results (84).xlsx
+2025-11-11 15:58:41 -   \u2713 Loaded 760 rows, 5 columns
+2025-11-11 15:58:41 - 
+[3/4] Processing: provided_keywords_results (1).xlsx
+2025-11-11 15:58:41 -   \u2713 Loaded 1309 rows, 2 columns
+2025-11-11 15:58:41 - 
+[4/4] Processing: provided_keywords_results (2).xlsx
+2025-11-11 15:58:41 -   \u2713 Loaded 1428 rows, 2 columns
+2025-11-11 15:58:41 - 
+\U0001f504 Merging all files...
+2025-11-11 15:58:41 - 
+\u2705 Merged file saved: merged_output.xlsx
+2025-11-11 15:58:41 - 
+==================================================
+2025-11-11 15:58:41 - \U0001f4c8 MERGE SUMMARY
+2025-11-11 15:58:41 - ==================================================
+2025-11-11 15:58:41 - \u2713 Files processed: 4
+2025-11-11 15:58:41 - \u26a0 Files skipped: 0
+2025-11-11 15:58:41 - \U0001f4ca Total rows in merged data: 4337
+2025-11-11 15:58:41 - \U0001f4cb Total columns: 5
+2025-11-11 15:58:41 - \U0001f3f7 Column names: Search Keyword, provided, Search Volume, Keyword, Search Volume.1
