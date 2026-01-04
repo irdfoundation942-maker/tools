@@ -47,7 +47,7 @@ def process_section(section_data):
     return results
 
 def json_to_normal_text(json_str):
-    """Parse JSON string and convert to single normal text."""
+    """Parse JSON string and convert to single normal text - GENERIC VERSION for ANY JSON."""
     if pd.isna(json_str): # Handle Empty/NaN cells
         return ''
 
@@ -58,67 +58,100 @@ def json_to_normal_text(json_str):
 
     parts = []
 
-    # Taglines
-    if 'taglines' in data and isinstance(data['taglines'], list):
-        for tagline in data['taglines']:
-            if tagline: parts.append(strip_html_tags(tagline))
+    # Try to detect if this is a structured format we know
+    has_known_structure = any(key in data for key in [
+        'taglines', 'meta_title', 'benefits', 'when_to_recite', 
+        'how_to_perform', 'summary', 'faqs', 'meta_data', 
+        'todays_content', 'city_article', 'faq_section'
+    ])
 
-    # Meta title and description
-    if 'meta_title' in data and data['meta_title']:
-        parts.append(strip_html_tags(data['meta_title']))
-    if 'meta_description' in data and data['meta_description']:
-        parts.append(strip_html_tags(data['meta_description']))
+    if has_known_structure:
+        # Use the old structured approach for known formats
+        # Taglines
+        if 'taglines' in data and isinstance(data['taglines'], list):
+            for tagline in data['taglines']:
+                if tagline: parts.append(strip_html_tags(tagline))
 
-    # Benefits section (handles both object and array format)
-    if 'benefits' in data:
-        parts.extend(process_section(data['benefits']))
+        # Meta title and description
+        if 'meta_title' in data and data['meta_title']:
+            parts.append(strip_html_tags(data['meta_title']))
+        if 'meta_description' in data and data['meta_description']:
+            parts.append(strip_html_tags(data['meta_description']))
 
-    # When to recite section (handles both object and array format)
-    if 'when_to_recite' in data:
-        parts.extend(process_section(data['when_to_recite']))
+        # Benefits section (handles both object and array format)
+        if 'benefits' in data:
+            parts.extend(process_section(data['benefits']))
 
-    # How to perform section (handles both object and array format)
-    if 'how_to_perform' in data:
-        parts.extend(process_section(data['how_to_perform']))
+        # When to recite section (handles both object and array format)
+        if 'when_to_recite' in data:
+            parts.extend(process_section(data['when_to_recite']))
 
-    # Summary
-    if 'summary' in data and isinstance(data['summary'], list):
-        for item in data['summary']:
-            if item: parts.append(strip_html_tags(item))
+        # How to perform section (handles both object and array format)
+        if 'how_to_perform' in data:
+            parts.extend(process_section(data['how_to_perform']))
 
-    # FAQ section
-    if 'faqs' in data and isinstance(data['faqs'], list):
-        for faq in data['faqs']:
-            question = faq.get('question', '')
-            answer = faq.get('answer', '')
-            if question: parts.append(strip_html_tags(question))
-            if answer: parts.append(strip_html_tags(answer))
+        # Summary
+        if 'summary' in data and isinstance(data['summary'], list):
+            for item in data['summary']:
+                if item: parts.append(strip_html_tags(item))
 
-    # Legacy format support (meta_data, todays_content, city_article, faq_section)
-    if 'meta_data' in data:
-        meta_title = data['meta_data'].get('title', '')
-        meta_desc = data['meta_data'].get('desc', '')
-        if meta_title: parts.append(strip_html_tags(meta_title))
-        if meta_desc: parts.append(strip_html_tags(meta_desc))
+        # FAQ section
+        if 'faqs' in data and isinstance(data['faqs'], list):
+            for faq in data['faqs']:
+                question = faq.get('question', '')
+                answer = faq.get('answer', '')
+                if question: parts.append(strip_html_tags(question))
+                if answer: parts.append(strip_html_tags(answer))
 
-    if 'todays_content' in data:
-        todays_title = data['todays_content'].get('title', '')
-        todays_content = data['todays_content'].get('content', '')
-        if todays_title: parts.append(strip_html_tags(todays_title))
-        if todays_content: parts.append(strip_html_tags(todays_content))
+        # Legacy format support (meta_data, todays_content, city_article, faq_section)
+        if 'meta_data' in data:
+            meta_title = data['meta_data'].get('title', '')
+            meta_desc = data['meta_data'].get('desc', '')
+            if meta_title: parts.append(strip_html_tags(meta_title))
+            if meta_desc: parts.append(strip_html_tags(meta_desc))
 
-    if 'city_article' in data:
-        city_title = data['city_article'].get('title', '')
-        city_content = data['city_article'].get('content', '')
-        if city_title: parts.append(strip_html_tags(city_title))
-        if city_content: parts.append(strip_html_tags(city_content))
+        if 'todays_content' in data:
+            todays_title = data['todays_content'].get('title', '')
+            todays_content = data['todays_content'].get('content', '')
+            if todays_title: parts.append(strip_html_tags(todays_title))
+            if todays_content: parts.append(strip_html_tags(todays_content))
 
-    if 'faq_section' in data and isinstance(data['faq_section'], list):
-        for faq in data['faq_section']:
-            question = faq.get('question', '')
-            answer = faq.get('answer', '')
-            if question: parts.append(strip_html_tags(question))
-            if answer: parts.append(strip_html_tags(answer))
+        if 'city_article' in data:
+            city_title = data['city_article'].get('title', '')
+            city_content = data['city_article'].get('content', '')
+            if city_title: parts.append(strip_html_tags(city_title))
+            if city_content: parts.append(strip_html_tags(city_content))
+
+        if 'faq_section' in data and isinstance(data['faq_section'], list):
+            for faq in data['faq_section']:
+                question = faq.get('question', '')
+                answer = faq.get('answer', '')
+                if question: parts.append(strip_html_tags(question))
+                if answer: parts.append(strip_html_tags(answer))
+    else:
+        # Generic approach for ANY JSON structure
+        def extract_all_text(obj):
+            """Recursively extract all text from any JSON structure."""
+            results = []
+            
+            if obj is None:
+                return results
+            elif isinstance(obj, str):
+                cleaned = strip_html_tags(obj)
+                if cleaned:
+                    results.append(cleaned)
+            elif isinstance(obj, (int, float, bool)):
+                results.append(str(obj))
+            elif isinstance(obj, list):
+                for item in obj:
+                    results.extend(extract_all_text(item))
+            elif isinstance(obj, dict):
+                for key, value in obj.items():
+                    results.extend(extract_all_text(value))
+            
+            return results
+        
+        parts = extract_all_text(data)
 
     return '\n\n'.join(parts)
 

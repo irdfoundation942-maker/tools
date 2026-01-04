@@ -10,14 +10,18 @@
     />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-weight='bold'%3E%7B%7D%3C/text%3E%3C/svg%3E">
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial, sans-serif' font-weight='bold'%3E%7B%7D%3C/text%3E%3C/svg%3E"
+    />
 
     <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    
+
     <!-- SheetJS for Excel file reading -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
@@ -989,12 +993,36 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-            <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          <button
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            title="Toggle theme"
+          >
+            <svg
+              class="moon-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              />
             </svg>
-            <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            <svg
+              class="sun-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              />
             </svg>
           </button>
           <div class="file-input-wrapper">
@@ -1015,7 +1043,12 @@
               </svg>
               📊 Load Excel
             </button>
-            <input type="file" id="excelFileInput" accept=".xlsx,.xls" onchange="handleExcelUpload(event)" />
+            <input
+              type="file"
+              id="excelFileInput"
+              accept=".xlsx,.xls"
+              onchange="handleExcelUpload(event)"
+            />
           </div>
           <button class="btn btn-secondary" onclick="clearAll()">
             <svg
@@ -1328,20 +1361,20 @@
       // Theme functions
       function toggleTheme() {
         const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
+        const currentTheme = html.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        html.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
       }
 
       // Load saved theme on page load
-      (function() {
-        const savedTheme = localStorage.getItem('theme');
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
         if (savedTheme) {
-          document.documentElement.setAttribute('data-theme', savedTheme);
+          document.documentElement.setAttribute("data-theme", savedTheme);
         } else {
           // Default to dark theme
-          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.setAttribute("data-theme", "dark");
         }
       })();
 
@@ -1351,9 +1384,9 @@
       let activeId = null;
 
       // IndexedDB setup
-      const DB_NAME = 'JsonParserDB';
+      const DB_NAME = "JsonParserDB";
       const DB_VERSION = 1;
-      const STORE_NAME = 'jsonData';
+      const STORE_NAME = "jsonData";
       let db = null;
 
       // Open IndexedDB
@@ -1362,21 +1395,21 @@
           const request = indexedDB.open(DB_NAME, DB_VERSION);
 
           request.onerror = () => {
-            console.error('Failed to open IndexedDB:', request.error);
+            console.error("Failed to open IndexedDB:", request.error);
             reject(request.error);
           };
 
           request.onsuccess = () => {
             db = request.result;
-            console.log('IndexedDB opened successfully');
+            console.log("IndexedDB opened successfully");
             resolve(db);
           };
 
           request.onupgradeneeded = (event) => {
             const database = event.target.result;
             if (!database.objectStoreNames.contains(STORE_NAME)) {
-              database.createObjectStore(STORE_NAME, { keyPath: 'key' });
-              console.log('Object store created');
+              database.createObjectStore(STORE_NAME, { keyPath: "key" });
+              console.log("Object store created");
             }
           };
         });
@@ -1387,23 +1420,23 @@
         try {
           if (!db) await openDatabase();
 
-          const transaction = db.transaction([STORE_NAME], 'readwrite');
+          const transaction = db.transaction([STORE_NAME], "readwrite");
           const store = transaction.objectStore(STORE_NAME);
 
           // Save dataStore
-          store.put({ key: 'dataStore', value: dataStore });
+          store.put({ key: "dataStore", value: dataStore });
           // Save activeId
-          store.put({ key: 'activeId', value: activeId });
+          store.put({ key: "activeId", value: activeId });
 
           transaction.oncomplete = () => {
-            console.log('Data saved to IndexedDB:', dataStore.length, 'items');
+            console.log("Data saved to IndexedDB:", dataStore.length, "items");
           };
 
           transaction.onerror = () => {
-            console.error('Failed to save to IndexedDB:', transaction.error);
+            console.error("Failed to save to IndexedDB:", transaction.error);
           };
         } catch (e) {
-          console.error('Failed to save to IndexedDB:', e);
+          console.error("Failed to save to IndexedDB:", e);
         }
       }
 
@@ -1413,21 +1446,24 @@
           try {
             if (!db) await openDatabase();
 
-            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const transaction = db.transaction([STORE_NAME], "readonly");
             const store = transaction.objectStore(STORE_NAME);
 
-            const dataRequest = store.get('dataStore');
-            const activeIdRequest = store.get('activeId');
+            const dataRequest = store.get("dataStore");
+            const activeIdRequest = store.get("activeId");
 
             transaction.oncomplete = () => {
               const savedData = dataRequest.result;
               const savedActiveId = activeIdRequest.result;
 
-              console.log('Loading from IndexedDB, found data:', savedData ? 'yes' : 'no');
+              console.log(
+                "Loading from IndexedDB, found data:",
+                savedData ? "yes" : "no"
+              );
 
               if (savedData && savedData.value) {
                 dataStore = savedData.value;
-                console.log('Parsed dataStore:', dataStore.length, 'items');
+                console.log("Parsed dataStore:", dataStore.length, "items");
                 activeId = savedActiveId ? savedActiveId.value : null;
                 renderIdList();
 
@@ -1440,11 +1476,14 @@
             };
 
             transaction.onerror = () => {
-              console.error('Failed to load from IndexedDB:', transaction.error);
+              console.error(
+                "Failed to load from IndexedDB:",
+                transaction.error
+              );
               reject(transaction.error);
             };
           } catch (e) {
-            console.error('Failed to load from IndexedDB:', e);
+            console.error("Failed to load from IndexedDB:", e);
             dataStore = [];
             activeId = null;
             reject(e);
@@ -1456,12 +1495,12 @@
       function clearStorage() {
         if (!db) return;
 
-        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const transaction = db.transaction([STORE_NAME], "readwrite");
         const store = transaction.objectStore(STORE_NAME);
         store.clear();
 
         transaction.oncomplete = () => {
-          console.log('IndexedDB cleared');
+          console.log("IndexedDB cleared");
         };
       }
 
@@ -1675,16 +1714,19 @@
         // Find item with loose equality to handle string/number differences
         const item = dataStore.find((d) => d.id == id);
 
-        console.log('selectId called with:', id);
-        console.log('Found item:', item);
+        console.log("selectId called with:", id);
+        console.log("Found item:", item);
 
         if (item) {
           currentData = item.data;
-          
-          console.log('Item data:', item.data);
-          console.log('Item data type:', typeof item.data);
-          console.log('Item data keys:', item.data ? Object.keys(item.data) : 'null');
-          
+
+          console.log("Item data:", item.data);
+          console.log("Item data type:", typeof item.data);
+          console.log(
+            "Item data keys:",
+            item.data ? Object.keys(item.data) : "null"
+          );
+
           document.getElementById("jsonInput").value = JSON.stringify(
             item.data,
             null,
@@ -1698,7 +1740,7 @@
           // Switch to Plain Text tab (index 2) for Excel loaded data
           document.querySelectorAll(".tab-btn")[2].click();
         } else {
-          console.warn('No item found for ID:', id);
+          console.warn("No item found for ID:", id);
         }
       }
 
@@ -1836,9 +1878,12 @@
 
         if (!html) {
           // Debug: show what keys we have
-          console.log('Data has no recognized sections. Keys available:', Object.keys(data));
-          console.log('Full data:', data);
-          
+          console.log(
+            "Data has no recognized sections. Keys available:",
+            Object.keys(data)
+          );
+          console.log("Full data:", data);
+
           // Fallback: show raw data in a formatted way
           html = `
                     <div class="parsed-section fade-in">
@@ -1847,8 +1892,12 @@
                             <span class="section-title">Raw JSON Data</span>
                         </div>
                         <div class="section-content">
-                            <p><strong>Available keys:</strong> ${Object.keys(data).join(', ')}</p>
-                            <pre style="background: var(--bg-input); padding: 16px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; max-height: 400px; overflow-y: auto;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+                            <p><strong>Available keys:</strong> ${Object.keys(
+                              data
+                            ).join(", ")}</p>
+                            <pre style="background: var(--bg-input); padding: 16px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; max-height: 400px; overflow-y: auto;">${escapeHtml(
+                              JSON.stringify(data, null, 2)
+                            )}</pre>
                         </div>
                     </div>
                 `;
@@ -1895,10 +1944,61 @@
       function renderContentSection(section, label, iconClass, emoji) {
         // Handle array format: [{ title, subtitle, content }]
         if (Array.isArray(section)) {
-          return section.map(item => renderSingleSection(item, label, iconClass, emoji)).join("");
+          return section
+            .map((item) => renderSingleSection(item, label, iconClass, emoji))
+            .join("");
         }
         // Handle single object format: { title, subtitle, content }
         return renderSingleSection(section, label, iconClass, emoji);
+      }
+
+      // Helper to strip HTML tags from text
+      function stripHtmlTags(text) {
+        if (!text) return "";
+        if (typeof text !== "string") return String(text);
+        // Remove HTML tags
+        let clean = text.replace(/<[^>]+>/g, "");
+        // Replace multiple spaces/newlines with single space
+        clean = clean.replace(/\s+/g, " ");
+        return clean.trim();
+      }
+
+      // Helper to convert any value to plain text recursively
+      function convertValueToText(value, depth = 0) {
+        const indent = "  ".repeat(depth);
+        let result = [];
+
+        if (value === null || value === undefined) {
+          return [];
+        }
+
+        if (typeof value === "string") {
+          const cleaned = stripHtmlTags(value);
+          if (cleaned) result.push(cleaned);
+        } else if (typeof value === "number" || typeof value === "boolean") {
+          result.push(String(value));
+        } else if (Array.isArray(value)) {
+          value.forEach((item, index) => {
+            if (typeof item === "object" && item !== null) {
+              // For objects in array, process recursively
+              const itemText = convertValueToText(item, depth);
+              result = result.concat(itemText);
+            } else if (typeof item === "string") {
+              const cleaned = stripHtmlTags(item);
+              if (cleaned) result.push(cleaned);
+            } else if (item !== null && item !== undefined) {
+              result.push(String(item));
+            }
+          });
+        } else if (typeof value === "object") {
+          // For nested objects, process each property
+          Object.entries(value).forEach(([key, val]) => {
+            const nested = convertValueToText(val, depth);
+            result = result.concat(nested);
+          });
+        }
+
+        return result;
       }
 
       // Helper to add section text (handles both object and array formats)
@@ -1920,7 +2020,7 @@
           });
         }
         // Handle single object format: { title, subtitle, content }
-        else if (typeof section === 'object') {
+        else if (typeof section === "object") {
           text.push(`${label}:`);
           if (section.title) text.push(section.title);
           if (section.subtitle) text.push(section.subtitle);
@@ -1933,55 +2033,103 @@
         }
       }
 
-      // Render plain text output
+      // Render plain text output - GENERIC VERSION for ANY JSON structure
       function renderPlainText(data) {
         const output = document.getElementById("textOutput");
         let text = [];
 
-        // Taglines
-        if (data.taglines && Array.isArray(data.taglines)) {
-          text.push("TAGLINES:");
-          text.push(data.taglines.join(", "));
-          text.push("");
+        if (!data || typeof data !== "object") {
+          output.textContent = "Invalid data";
+          return;
         }
 
-        // Meta
-        if (data.meta_title) {
-          text.push("META TITLE:");
-          text.push(data.meta_title);
-          text.push("");
-        }
+        // Try to detect if this is a structured format we know
+        const hasKnownStructure =
+          data.taglines ||
+          data.meta_title ||
+          data.benefits ||
+          data.when_to_recite ||
+          data.how_to_perform ||
+          data.summary ||
+          data.faqs;
 
-        if (data.meta_description) {
-          text.push("META DESCRIPTION:");
-          text.push(data.meta_description);
-          text.push("");
-        }
-
-        // Benefits (handles both object and array format)
-        addSectionText(text, data.benefits, "BENEFITS");
-
-        // When to Recite (handles both object and array format)
-        addSectionText(text, data.when_to_recite, "WHEN TO RECITE");
-
-        // How to Perform (handles both object and array format)
-        addSectionText(text, data.how_to_perform, "HOW TO PERFORM");
-
-        // Summary
-        if (data.summary && Array.isArray(data.summary)) {
-          text.push("SUMMARY:");
-          data.summary.forEach((p) => text.push(p));
-          text.push("");
-        }
-
-        // FAQs
-        if (data.faqs && Array.isArray(data.faqs)) {
-          text.push("FREQUENTLY ASKED QUESTIONS:");
-          data.faqs.forEach((faq, i) => {
-            text.push(`Q${i + 1}: ${faq.question}`);
-            text.push(`A${i + 1}: ${faq.answer}`);
+        if (hasKnownStructure) {
+          // Use the old structured approach for known formats
+          // Taglines
+          if (data.taglines && Array.isArray(data.taglines)) {
+            text.push("TAGLINES:");
+            text.push(data.taglines.join(", "));
             text.push("");
+          }
+
+          // Meta
+          if (data.meta_title) {
+            text.push("META TITLE:");
+            text.push(data.meta_title);
+            text.push("");
+          }
+
+          if (data.meta_description) {
+            text.push("META DESCRIPTION:");
+            text.push(data.meta_description);
+            text.push("");
+          }
+
+          // Benefits (handles both object and array format)
+          addSectionText(text, data.benefits, "BENEFITS");
+
+          // When to Recite (handles both object and array format)
+          addSectionText(text, data.when_to_recite, "WHEN TO RECITE");
+
+          // How to Perform (handles both object and array format)
+          addSectionText(text, data.how_to_perform, "HOW TO PERFORM");
+
+          // Summary
+          if (data.summary && Array.isArray(data.summary)) {
+            text.push("SUMMARY:");
+            data.summary.forEach((p) => text.push(p));
+            text.push("");
+          }
+
+          // FAQs
+          if (data.faqs && Array.isArray(data.faqs)) {
+            text.push("FREQUENTLY ASKED QUESTIONS:");
+            data.faqs.forEach((faq, i) => {
+              text.push(`Q${i + 1}: ${faq.question}`);
+              text.push(`A${i + 1}: ${faq.answer}`);
+              text.push("");
+            });
+          }
+        } else {
+          // Generic approach for ANY JSON structure
+          console.log("Using generic JSON to text conversion");
+
+          // Process all key-value pairs recursively
+          Object.entries(data).forEach(([key, value]) => {
+            // Add section header with formatted key name
+            const formattedKey = key
+              .replace(/_/g, " ")
+              .replace(/([A-Z])/g, " $1")
+              .trim()
+              .toUpperCase();
+
+            // Convert the value to text
+            const valueText = convertValueToText(value, 0);
+
+            if (valueText.length > 0) {
+              text.push(`${formattedKey}:`);
+              text = text.concat(valueText);
+              text.push("");
+            }
           });
+        }
+
+        // If still no text extracted, show a message
+        if (text.length === 0) {
+          text.push("No text content could be extracted from this JSON.");
+          text.push("");
+          text.push("Raw JSON:");
+          text.push(JSON.stringify(data, null, 2));
         }
 
         output.textContent = text.join("\n");
@@ -2074,104 +2222,122 @@
 
         const loadingOverlay = document.getElementById("loadingOverlay");
         const loadingProgress = document.getElementById("loadingProgress");
-        
+
         loadingOverlay.classList.add("show");
         loadingProgress.textContent = "Reading file...";
 
         const reader = new FileReader();
-        
+
         reader.onload = function (e) {
           try {
             loadingProgress.textContent = "Parsing Excel data...";
-            
+
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: "array" });
-            
+
             // Get first sheet
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            
+
             // Convert to JSON
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
-            
+
             loadingProgress.textContent = `Found ${jsonData.length} rows. Processing...`;
-            
+
             // Clear existing data
             dataStore = [];
             activeId = null;
-            
+
             let successCount = 0;
             let errorCount = 0;
-            
+
             // Process each row
             jsonData.forEach((row, index) => {
               // Look for ID column (case-insensitive)
-              let id = row.ID || row.id || row.Id || (index + 1);
-              
+              let id = row.ID || row.id || row.Id || index + 1;
+
               // Look for input/JSON column (case-insensitive)
-              let jsonStr = row.input || row.Input || row.INPUT || 
-                           row.json || row.JSON || row.Json ||
-                           row.content || row.Content || row.CONTENT ||
-                           row.data || row.Data || row.DATA;
-              
+              let jsonStr =
+                row.input ||
+                row.Input ||
+                row.INPUT ||
+                row.json ||
+                row.JSON ||
+                row.Json ||
+                row.content ||
+                row.Content ||
+                row.CONTENT ||
+                row.data ||
+                row.Data ||
+                row.DATA;
+
               if (jsonStr) {
                 try {
                   let parsedData;
-                  
+
                   // Handle different formats
-                  if (typeof jsonStr === 'object') {
+                  if (typeof jsonStr === "object") {
                     // Already an object
                     parsedData = jsonStr;
-                  } else if (typeof jsonStr === 'string') {
+                  } else if (typeof jsonStr === "string") {
                     // Clean the string first
                     let cleanStr = jsonStr.trim();
-                    
+
                     // Remove potential BOM or weird characters
-                    cleanStr = cleanStr.replace(/^\uFEFF/, '');
-                    
+                    cleanStr = cleanStr.replace(/^\uFEFF/, "");
+
                     // Try to parse
                     parsedData = JSON.parse(cleanStr);
                   } else {
-                    throw new Error('Unknown data type');
+                    throw new Error("Unknown data type");
                   }
-                  
+
                   // Debug: log first item to console
                   if (index === 0) {
-                    console.log('First row data:', parsedData);
-                    console.log('Keys:', Object.keys(parsedData));
+                    console.log("First row data:", parsedData);
+                    console.log("Keys:", Object.keys(parsedData));
                   }
-                  
+
                   // Get title for display - check multiple possible fields
-                  let title = parsedData.meta_title || 
-                             parsedData.title ||
-                             parsedData.meta?.title ||
-                             (parsedData.taglines && Array.isArray(parsedData.taglines) && parsedData.taglines[0]) ||
-                             (parsedData.meta_description && parsedData.meta_description.substring(0, 40)) ||
-                             `Data #${id}`;
-                  
+                  let title =
+                    parsedData.meta_title ||
+                    parsedData.title ||
+                    parsedData.meta?.title ||
+                    (parsedData.taglines &&
+                      Array.isArray(parsedData.taglines) &&
+                      parsedData.taglines[0]) ||
+                    (parsedData.meta_description &&
+                      parsedData.meta_description.substring(0, 40)) ||
+                    `Data #${id}`;
+
                   // Ensure title is a string
                   title = String(title);
-                  
+
                   dataStore.push({
                     id: id,
-                    title: title.substring(0, 40) + (title.length > 40 ? '...' : ''),
-                    data: parsedData
+                    title:
+                      title.substring(0, 40) + (title.length > 40 ? "..." : ""),
+                    data: parsedData,
                   });
-                  
+
                   successCount++;
                 } catch (parseError) {
-                  console.warn(`Row ${index + 1}: Invalid JSON - ${parseError.message}`);
-                  console.warn('Raw data:', jsonStr);
+                  console.warn(
+                    `Row ${index + 1}: Invalid JSON - ${parseError.message}`
+                  );
+                  console.warn("Raw data:", jsonStr);
                   errorCount++;
                 }
               }
-              
+
               // Update progress
               if ((index + 1) % 50 === 0 || index === jsonData.length - 1) {
-                loadingProgress.textContent = `Processing row ${index + 1} of ${jsonData.length}...`;
+                loadingProgress.textContent = `Processing row ${index + 1} of ${
+                  jsonData.length
+                }...`;
               }
             });
-            
+
             // Render the ID list
             renderIdList();
             saveToStorage();
@@ -2182,39 +2348,41 @@
             // Show success message
             const successMsg = document.getElementById("successMsg");
             const successText = document.getElementById("successText");
-            successText.textContent = `✅ Loaded ${successCount} items from Excel!${errorCount > 0 ? ` (${errorCount} rows had invalid JSON)` : ''}`;
+            successText.textContent = `✅ Loaded ${successCount} items from Excel!${
+              errorCount > 0 ? ` (${errorCount} rows had invalid JSON)` : ""
+            }`;
             successMsg.classList.add("show");
             setTimeout(() => successMsg.classList.remove("show"), 4000);
-            
+
             // Reset file input
             event.target.value = "";
-            
+
             // Don't auto-select, let user click on an ID
             // Switch to input tab but user will click ID to see plain text
-            
           } catch (error) {
             loadingOverlay.classList.remove("show");
-            
+
             const errorMsg = document.getElementById("errorMsg");
             const errorText = document.getElementById("errorText");
-            errorText.textContent = "Error reading Excel file: " + error.message;
+            errorText.textContent =
+              "Error reading Excel file: " + error.message;
             errorMsg.classList.add("show");
-            
+
             event.target.value = "";
           }
         };
-        
+
         reader.onerror = function () {
           loadingOverlay.classList.remove("show");
-          
+
           const errorMsg = document.getElementById("errorMsg");
           const errorText = document.getElementById("errorText");
           errorText.textContent = "Error reading file. Please try again.";
           errorMsg.classList.add("show");
-          
+
           event.target.value = "";
         };
-        
+
         reader.readAsArrayBuffer(file);
       }
 
@@ -2226,11 +2394,11 @@
       });
 
       // Initialize
-      document.addEventListener('DOMContentLoaded', async function() {
+      document.addEventListener("DOMContentLoaded", async function () {
         await openDatabase();
         await loadFromStorage();
         renderIdList();
-        console.log('Initialization complete, items:', dataStore.length);
+        console.log("Initialization complete, items:", dataStore.length);
       });
     </script>
   </body>
