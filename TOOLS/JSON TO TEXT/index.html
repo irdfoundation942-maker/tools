@@ -209,7 +209,7 @@
       }
 
       .header-content {
-        max-width: 1600px;
+        max-width: 1980px;
         margin: 0 auto;
         display: flex;
         align-items: center;
@@ -267,7 +267,7 @@
 
       /* Sidebar - ID List */
       .sidebar {
-        width: 280px;
+        width: 340px;
         background: rgba(30, 41, 59, 0.6);
         backdrop-filter: blur(10px);
         border-right: 1px solid var(--border);
@@ -450,7 +450,7 @@
 
       .json-textarea {
         width: 100%;
-        min-height: 300px;
+        min-height: 450px;
         background: var(--bg-input);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
@@ -535,7 +535,7 @@
 
       .output-header {
         padding: 20px 24px;
-        background: rgba(15, 23, 42, 0.5);
+        background: rgba(232, 240, 250, 0.15);
         border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
@@ -723,8 +723,8 @@
         line-height: 1.8;
         color: var(--text-white);
         white-space: pre-wrap;
-        min-height: 300px;
-        max-height: 500px;
+        min-height: 500px;
+        max-height: calc(100vh - 400px);
         overflow-y: auto;
       }
 
@@ -1347,6 +1347,121 @@
       let currentData = null;
       let activeId = null;
 
+      // IndexedDB setup
+      const DB_NAME = 'JsonParserDB';
+      const DB_VERSION = 1;
+      const STORE_NAME = 'jsonData';
+      let db = null;
+
+      // Open IndexedDB
+      function openDatabase() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+          request.onerror = () => {
+            console.error('Failed to open IndexedDB:', request.error);
+            reject(request.error);
+          };
+
+          request.onsuccess = () => {
+            db = request.result;
+            console.log('IndexedDB opened successfully');
+            resolve(db);
+          };
+
+          request.onupgradeneeded = (event) => {
+            const database = event.target.result;
+            if (!database.objectStoreNames.contains(STORE_NAME)) {
+              database.createObjectStore(STORE_NAME, { keyPath: 'key' });
+              console.log('Object store created');
+            }
+          };
+        });
+      }
+
+      // Save data to IndexedDB
+      async function saveToStorage() {
+        try {
+          if (!db) await openDatabase();
+
+          const transaction = db.transaction([STORE_NAME], 'readwrite');
+          const store = transaction.objectStore(STORE_NAME);
+
+          // Save dataStore
+          store.put({ key: 'dataStore', value: dataStore });
+          // Save activeId
+          store.put({ key: 'activeId', value: activeId });
+
+          transaction.oncomplete = () => {
+            console.log('Data saved to IndexedDB:', dataStore.length, 'items');
+          };
+
+          transaction.onerror = () => {
+            console.error('Failed to save to IndexedDB:', transaction.error);
+          };
+        } catch (e) {
+          console.error('Failed to save to IndexedDB:', e);
+        }
+      }
+
+      // Load data from IndexedDB
+      function loadFromStorage() {
+        return new Promise(async (resolve, reject) => {
+          try {
+            if (!db) await openDatabase();
+
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+
+            const dataRequest = store.get('dataStore');
+            const activeIdRequest = store.get('activeId');
+
+            transaction.oncomplete = () => {
+              const savedData = dataRequest.result;
+              const savedActiveId = activeIdRequest.result;
+
+              console.log('Loading from IndexedDB, found data:', savedData ? 'yes' : 'no');
+
+              if (savedData && savedData.value) {
+                dataStore = savedData.value;
+                console.log('Parsed dataStore:', dataStore.length, 'items');
+                activeId = savedActiveId ? savedActiveId.value : null;
+                renderIdList();
+
+                // If there was an active item, restore it
+                if (activeId && dataStore.length > 0) {
+                  selectId(activeId);
+                }
+              }
+              resolve();
+            };
+
+            transaction.onerror = () => {
+              console.error('Failed to load from IndexedDB:', transaction.error);
+              reject(transaction.error);
+            };
+          } catch (e) {
+            console.error('Failed to load from IndexedDB:', e);
+            dataStore = [];
+            activeId = null;
+            reject(e);
+          }
+        });
+      }
+
+      // Clear IndexedDB
+      function clearStorage() {
+        if (!db) return;
+
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        store.clear();
+
+        transaction.oncomplete = () => {
+          console.log('IndexedDB cleared');
+        };
+      }
+
       // Sample data based on user's JSON structure
       const sampleData = {
         taglines: [
@@ -1508,6 +1623,7 @@
           });
 
           renderIdList();
+          saveToStorage();
 
           successText.textContent = `Added as ID #${id} to the list!`;
           successMsg.classList.add("show");
@@ -1574,6 +1690,7 @@
           renderParsedContent(item.data);
           renderPlainText(item.data);
           renderIdList();
+          saveToStorage();
 
           // Switch to Plain Text tab (index 2) for Excel loaded data
           document.querySelectorAll(".tab-btn")[2].click();
@@ -1921,6 +2038,7 @@
         dataStore = [];
         currentData = null;
         activeId = null;
+        clearStorage();
         document.getElementById("jsonInput").value = "";
         document.getElementById("textOutput").textContent =
           "Parse JSON to see plain text output here...";
@@ -2053,10 +2171,11 @@
             
             // Render the ID list
             renderIdList();
-            
+            saveToStorage();
+
             // Hide loading
             loadingOverlay.classList.remove("show");
-            
+
             // Show success message
             const successMsg = document.getElementById("successMsg");
             const successText = document.getElementById("successText");
@@ -2104,7 +2223,12 @@
       });
 
       // Initialize
-      renderIdList();
+      document.addEventListener('DOMContentLoaded', async function() {
+        await openDatabase();
+        await loadFromStorage();
+        renderIdList();
+        console.log('Initialization complete, items:', dataStore.length);
+      });
     </script>
   </body>
 </html>
