@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON to Text Parser | Advanced Converter Tool</title>
+    <meta
+      name="description"
+      content="Convert JSON data to readable text format. Parse, view, and organize JSON content with ID-based navigation."
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- SheetJS for Excel file reading -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --primary-light: rgba(99, 102, 241, 0.1);
+        --secondary: #10b981;
+        --secondary-light: rgba(16, 185, 129, 0.1);
+        --accent: #f59e0b;
+        --accent-light: rgba(245, 158, 11, 0.1);
+        --danger: #ef4444;
+        --danger-light: rgba(239, 68, 68, 0.1);
+
+        --bg-dark: #0f172a;
+        --bg-card: #1e293b;
+        --bg-card-hover: #334155;
+        --bg-input: #0f172a;
+
+        --text-white: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
+
+        --border: #334155;
+        --border-light: #475569;
+
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      }
+
+      /* Light Theme */
+      [data-theme="light"] {
+        --bg-dark: #f1f5f9;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f8fafc;
+        --bg-input: #f8fafc;
+
+        --text-white: #1e293b;
+        --text-muted: #475569;
+        --text-dim: #64748b;
+
+        --border: #e2e8f0;
+        --border-light: #cbd5e1;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+        --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+      }
+
+      [data-theme="light"] body::before {
+        background: radial-gradient(
+            ellipse at 20% 20%,
+            rgba(99, 102, 241, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(16, 185, 129, 0.06) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(245, 158, 11, 0.04) 0%,
+            transparent 50%
+          );
+      }
+
+      [data-theme="light"] .header {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      [data-theme="light"] .sidebar {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      [data-theme="light"] .logo-text h1 {
+        background: linear-gradient(135deg, #1e293b, #475569);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      [data-theme="light"] .loading-overlay {
+        background: rgba(241, 245, 249, 0.95);
+      }
+
+      [data-theme="light"] .loading-spinner {
+        border-color: #e2e8f0;
+        border-top-color: var(--primary);
+      }
+
+      /* Theme Toggle Button */
+      .theme-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        color: var(--text-white);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-light);
+      }
+
+      .theme-toggle svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .theme-toggle .sun-icon {
+        display: none;
+      }
+
+      .theme-toggle .moon-icon {
+        display: block;
+      }
+
+      [data-theme="light"] .theme-toggle .sun-icon {
+        display: block;
+      }
+
+      [data-theme="light"] .theme-toggle .moon-icon {
+        display: none;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-white);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Animated background gradient */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            ellipse at 20% 20%,
+            rgba(99, 102, 241, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(16, 185, 129, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(245, 158, 11, 0.05) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Header */
+      .header {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 40px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-icon {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: var(--shadow-glow);
+      }
+
+      .logo-text h1 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--text-white),
+          var(--text-muted)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .logo-text span {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      /* Main Layout */
+      .main-container {
+        display: flex;
+        min-height: calc(100vh - 85px);
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Sidebar - ID List */
+      .sidebar {
+        width: 280px;
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid var(--border);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow-y: auto;
+        max-height: calc(100vh - 85px);
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sidebar-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .id-count {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .id-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .id-item {
+        padding: 14px 16px;
+        background: var(--bg-card);
+        border: 1px solid transparent;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .id-item:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-light);
+        transform: translateX(4px);
+      }
+
+      .id-item.active {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+      }
+
+      .id-item.active .id-number {
+        background: var(--primary);
+        color: white;
+      }
+
+      .id-number {
+        width: 32px;
+        height: 32px;
+        background: var(--bg-input);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .id-label {
+        flex: 1;
+        font-size: 0.875rem;
+        color: var(--text-white);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Content Area */
+      .content-area {
+        flex: 1;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        overflow-y: auto;
+        max-height: calc(100vh - 85px);
+      }
+
+      /* Tabs */
+      .tabs-container {
+        display: flex;
+        gap: 8px;
+        background: var(--bg-card);
+        padding: 6px;
+        border-radius: var(--radius-lg);
+        width: fit-content;
+      }
+
+      .tab-btn {
+        padding: 12px 24px;
+        background: transparent;
+        border: none;
+        border-radius: var(--radius-md);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-white);
+      }
+
+      .tab-btn.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Tab Panels */
+      .tab-panel {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .tab-panel.active {
+        display: flex;
+      }
+
+      /* Input Panel */
+      .input-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .input-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .input-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-white);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .input-title svg {
+        color: var(--primary);
+      }
+
+      .json-textarea {
+        width: 100%;
+        min-height: 300px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        color: var(--text-white);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875rem;
+        line-height: 1.7;
+        resize: vertical;
+        transition: all 0.2s ease;
+      }
+
+      .json-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+      }
+
+      .json-textarea::placeholder {
+        color: var(--text-dim);
+      }
+
+      /* Buttons */
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-hover)
+        );
+        color: white;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+      }
+
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-white);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-light);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--secondary), #059669);
+        color: white;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      /* Output Panel */
+      .output-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        flex: 1;
+      }
+
+      .output-header {
+        padding: 20px 24px;
+        background: rgba(15, 23, 42, 0.5);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .output-title {
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .output-content {
+        padding: 24px;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      /* Parsed Content Sections */
+      .parsed-section {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .parsed-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+      }
+
+      .section-icon.taglines {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .section-icon.meta {
+        background: var(--secondary-light);
+        color: var(--secondary);
+      }
+      .section-icon.benefits {
+        background: var(--accent-light);
+        color: var(--accent);
+      }
+      .section-icon.when {
+        background: rgba(236, 72, 153, 0.1);
+        color: #ec4899;
+      }
+      .section-icon.how {
+        background: rgba(14, 165, 233, 0.1);
+        color: #0ea5e9;
+      }
+      .section-icon.summary {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+      }
+      .section-icon.faq {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      .section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .section-content {
+        color: var(--text-white);
+        line-height: 1.8;
+      }
+
+      .section-content p {
+        margin-bottom: 8px;
+      }
+
+      .section-content .subtitle {
+        color: var(--text-dim);
+        font-style: italic;
+        margin-bottom: 12px;
+      }
+
+      .content-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .content-list li {
+        padding: 10px 0;
+        padding-left: 24px;
+        position: relative;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      }
+
+      .content-list li:last-child {
+        border-bottom: none;
+      }
+
+      .content-list li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+      }
+
+      /* Taglines */
+      .taglines-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tagline-chip {
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      /* FAQ */
+      .faq-item {
+        background: var(--bg-input);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+
+      .faq-question {
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .faq-question::before {
+        content: "Q";
+        background: var(--primary);
+        color: white;
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+      }
+
+      .faq-answer {
+        color: var(--text-muted);
+        padding-left: 32px;
+        line-height: 1.7;
+      }
+
+      /* Text Output */
+      .text-output {
+        background: var(--bg-input);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875rem;
+        line-height: 1.8;
+        color: var(--text-white);
+        white-space: pre-wrap;
+        min-height: 300px;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 60px 40px;
+        color: var(--text-dim);
+      }
+
+      .empty-state svg {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .empty-state h3 {
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+
+      .empty-state p {
+        font-size: 0.9rem;
+      }
+
+      /* Error Message */
+      .error-message {
+        background: var(--danger-light);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+        padding: 14px 18px;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        display: none;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .error-message.show {
+        display: flex;
+      }
+
+      /* Success Message */
+      .success-message {
+        background: var(--secondary-light);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--secondary);
+        padding: 14px 18px;
+        border-radius: var(--radius-md);
+        font-size: 0.875rem;
+        display: none;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .success-message.show {
+        display: flex;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-dark);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--border-light);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .main-container {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          max-height: 200px;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding: 16px;
+        }
+
+        .sidebar-header {
+          display: none;
+        }
+
+        .id-list {
+          flex-direction: row;
+          gap: 8px;
+        }
+
+        .id-item {
+          flex-shrink: 0;
+        }
+
+        .content-area {
+          max-height: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .header {
+          padding: 16px 20px;
+        }
+
+        .content-area {
+          padding: 20px;
+        }
+
+        .tabs-container {
+          width: 100%;
+        }
+
+        .tab-btn {
+          flex: 1;
+          text-align: center;
+          padding: 10px 12px;
+          font-size: 0.8rem;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.3s ease forwards;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      /* File Upload Button */
+      .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+
+      .file-input-wrapper input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+
+      .btn-upload {
+        background: linear-gradient(135deg, var(--secondary), #059669);
+        color: white;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+      }
+
+      .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+      }
+
+      /* Loading Overlay */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .loading-overlay.show {
+        display: flex;
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: var(--text-white);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .loading-progress {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">📄</div>
+          <div class="logo-text">
+            <h1>JSON Parser</h1>
+            <span>Convert • Parse • Organize</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+            <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+          </button>
+          <div class="file-input-wrapper">
+            <button class="btn btn-upload">
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              📊 Load Excel
+            </button>
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls" onchange="handleExcelUpload(event)" />
+          </div>
+          <button class="btn btn-secondary" onclick="clearAll()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Clear All
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+      <!-- Sidebar - ID List -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Data IDs</span>
+          <span class="id-count" id="idCount">0</span>
+        </div>
+        <div class="id-list" id="idList">
+          <div class="empty-state" style="padding: 30px 10px">
+            <p>No data loaded yet</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <main class="content-area">
+        <!-- Tabs -->
+        <div class="tabs-container">
+          <button class="tab-btn active" onclick="switchTab('input')">
+            📝 JSON Input
+          </button>
+          <button class="tab-btn" onclick="switchTab('parsed')">
+            ✨ Parsed View
+          </button>
+          <button class="tab-btn" onclick="switchTab('text')">
+            📋 Plain Text
+          </button>
+        </div>
+
+        <!-- Input Tab -->
+        <div class="tab-panel active" id="input-panel">
+          <div class="input-section">
+            <div class="input-header">
+              <div class="input-title">
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  />
+                </svg>
+                Paste Your JSON Here
+              </div>
+            </div>
+            <textarea
+              class="json-textarea"
+              id="jsonInput"
+              placeholder='{
+  "taglines": ["Tag 1", "Tag 2"],
+  "meta_title": "Your Title",
+  "meta_description": "Your description",
+  "benefits": {
+    "title": "Benefits Title",
+    "subtitle": "Benefits subtitle",
+    "content": ["Benefit 1", "Benefit 2"]
+  },
+  "when_to_recite": {
+    "title": "When Title",
+    "subtitle": "When subtitle",
+    "content": ["When 1", "When 2"]
+  },
+  "how_to_perform": {
+    "title": "How Title",
+    "subtitle": "How subtitle",
+    "content": ["Step 1", "Step 2"]
+  },
+  "summary": ["Summary paragraph 1", "Summary paragraph 2"],
+  "faqs": [
+    {"question": "Question 1?", "answer": "Answer 1"},
+    {"question": "Question 2?", "answer": "Answer 2"}
+  ]
+}'
+            ></textarea>
+
+            <div id="errorMsg" class="error-message">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span id="errorText"></span>
+            </div>
+
+            <div id="successMsg" class="success-message">
+              <svg
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span id="successText"></span>
+            </div>
+
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="parseJSON()">
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+                Parse JSON
+              </button>
+              <button class="btn btn-secondary" onclick="addToList()">
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Add to List
+              </button>
+              <button class="btn btn-secondary" onclick="loadSampleData()">
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                  />
+                </svg>
+                Load Sample
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parsed View Tab -->
+        <div class="tab-panel" id="parsed-panel">
+          <div class="output-section">
+            <div class="output-header">
+              <div class="output-title">
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Parsed Content
+              </div>
+              <button class="btn btn-secondary" onclick="copyParsed()">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy
+              </button>
+            </div>
+            <div class="output-content" id="parsedOutput">
+              <div class="empty-state">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <h3>No Content Yet</h3>
+                <p>Paste JSON in the input tab and click "Parse JSON"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plain Text Tab -->
+        <div class="tab-panel" id="text-panel">
+          <div class="output-section">
+            <div class="output-header">
+              <div class="output-title">
+                <svg
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                </svg>
+                Plain Text Output
+              </div>
+              <button class="btn btn-secondary" onclick="copyText()">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy Text
+              </button>
+            </div>
+            <div class="output-content">
+              <div class="text-output" id="textOutput">
+                Parse JSON to see plain text output here...
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading Excel File...</div>
+      <div class="loading-progress" id="loadingProgress">Please wait</div>
+    </div>
+
+    <script>
+      // Theme functions
+      function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      }
+
+      // Load saved theme on page load
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+          // Default to dark theme
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+
+      // Global data store
+      let dataStore = [];
+      let currentData = null;
+      let activeId = null;
+
+      // Sample data based on user's JSON structure
+      const sampleData = {
+        taglines: [
+          "Rizq Dua",
+          "Masnoon Dua",
+          "After Salah",
+          "Wealth Dua",
+          "Sahih Bukhari",
+        ],
+        meta_title: "Dua for Rizq and Help After Prayer for Wealth and Success",
+        meta_description:
+          "Read this dua after prayer for rizq and help. Learn the correct way to ask Allah for wealth and barakah with this masnoon dua for success in your life.",
+        benefits: {
+          title: "Benefits of Dua After Prayer for Rizq",
+          subtitle:
+            "Reciting this beautiful dua brings peace to the heart because it reminds you that only Allah is the one who gives provision and no one can stop His blessings from reaching you.",
+          content: [
+            "Saying Allahumma la mania lima ataita helps you trust that your rizq is written only by Allah.",
+            "This dua after prayer removes fear of people because you know they cannot stop Allah's help.",
+            "It keeps the heart humble by reminding us that our hard work only succeeds with Allah's permission.",
+            "Reciting this dua for rizq protects a muslim from being jealous of others who have wealth.",
+            "This masnoon dua strengthens your connection with Allah after every fard prayer you perform.",
+          ],
+        },
+        when_to_recite: {
+          title: "When to Recite Dua After Prayer for Help",
+          subtitle:
+            "You should make it a habit to say these words at specific times to follow the sunnah and to remind yourself that all success and wealth come directly from the command of Allah.",
+          content: [
+            "The best time to recite this dua for rizq is immediately after saying tasleem in fard prayer.",
+            "You can say this dua for wealth whenever you feel worried about your job or money matters.",
+            "It is good to recite this dua for help from Allah in the morning to start your day with trust.",
+            "Recite this dua after namaz especially when you finish your daily prayers at the mosque or home.",
+            "Use this dua for rizq and success when you are making your daily dhikr and remembering Allah.",
+          ],
+        },
+        how_to_perform: {
+          title: "How to perform Dua After Prayer for Rizq",
+          subtitle:
+            "Doing this act of worship is very simple and brings great rewards if you focus on the meaning while affirming that no one can stop what Allah decides to give you in this life.",
+          content: [
+            "Sit calmly after your fard prayer and finish the tasleem before you start this dua for rizq.",
+            "You do not need to raise hands but say the words La ilaha illallahu wahdahu with full focus.",
+            "Understand that when you say Allahumma la mania you are admitting only Allah has power.",
+            "Recite this dua after prayer individually with a low voice so you can hear yourself speak.",
+            "Make sure you pronounce the arabic words clearly or read the translation if you are learning.",
+          ],
+        },
+        summary: [
+          "The Dua After Prayer for Rizq and Help is a very strong statement that comes from authentic hadith. It teaches us that Allah is the Owner of everything. When a muslim recites this, they admit that if Allah wants to give wealth, nobody can stop it, and if He holds it back, nobody can force Him to give it.",
+          "Using this dua for rizq and wealth daily changes how you look at life. It makes you rely less on people and more on your Creator. By reciting this dua after namaz regularly, you find peace knowing that your success is in safe hands. It is a simple way to ask Allah for help and keep your faith strong.",
+        ],
+        faqs: [
+          {
+            question: "Does this dua for rizq guarantee wealth?",
+            answer:
+              "This dua for rizq builds trust in Allah. It brings barakah in what you have and opens doors for wealth if it is good for you, but exact results depend on Allah.",
+          },
+          {
+            question: "Can I read this dua for help without wudu?",
+            answer:
+              "Yes, you can read this dua for help from Allah without wudu as it is a form of dhikr. However, it is usually recited right after fard prayer when you have wudu.",
+          },
+          {
+            question: "Is this a powerful dua for rizq and success?",
+            answer:
+              "Yes, this is a very powerful dua for rizq because it was recited by the Prophet. It affirms that all success and provision come only from Allah's command.",
+          },
+          {
+            question: "How many times should I read dua for rizk?",
+            answer:
+              "There is no fixed number for this dua for rizk. The sunnah is to recite it once after every fard prayer. You can also repeat it more times as general dhikr.",
+          },
+          {
+            question: "Where is this dua after prayer found?",
+            answer:
+              "This dua after prayer is found in Sahih Bukhari and Sahih Muslim. It is an authentic masnoon dua that the Prophet used to say after finishing his prayers.",
+          },
+        ],
+      };
+
+      // Switch between tabs
+      function switchTab(tabName) {
+        // Remove active class from all tabs and panels
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-panel")
+          .forEach((panel) => panel.classList.remove("active"));
+
+        // Add active class to selected tab and panel
+        event.target.classList.add("active");
+        document.getElementById(`${tabName}-panel`).classList.add("active");
+      }
+
+      // Parse JSON from input
+      function parseJSON() {
+        const input = document.getElementById("jsonInput").value.trim();
+        const errorMsg = document.getElementById("errorMsg");
+        const errorText = document.getElementById("errorText");
+        const successMsg = document.getElementById("successMsg");
+        const successText = document.getElementById("successText");
+
+        errorMsg.classList.remove("show");
+        successMsg.classList.remove("show");
+
+        if (!input) {
+          errorText.textContent = "Please enter JSON data to parse.";
+          errorMsg.classList.add("show");
+          return;
+        }
+
+        try {
+          currentData = JSON.parse(input);
+          renderParsedContent(currentData);
+          renderPlainText(currentData);
+
+          successText.textContent =
+            'JSON parsed successfully! Switch to "Parsed View" or "Plain Text" to see results.';
+          successMsg.classList.add("show");
+
+          // Auto-switch to parsed view
+          setTimeout(() => {
+            document.querySelectorAll(".tab-btn")[1].click();
+          }, 500);
+        } catch (e) {
+          errorText.textContent = "Invalid JSON: " + e.message;
+          errorMsg.classList.add("show");
+        }
+      }
+
+      // Add current JSON to ID list
+      function addToList() {
+        const input = document.getElementById("jsonInput").value.trim();
+        const errorMsg = document.getElementById("errorMsg");
+        const errorText = document.getElementById("errorText");
+        const successMsg = document.getElementById("successMsg");
+        const successText = document.getElementById("successText");
+
+        errorMsg.classList.remove("show");
+        successMsg.classList.remove("show");
+
+        if (!input) {
+          errorText.textContent = "Please enter JSON data first.";
+          errorMsg.classList.add("show");
+          return;
+        }
+
+        try {
+          const data = JSON.parse(input);
+          const id = dataStore.length + 1;
+          const title = data.meta_title || data.title || `Data #${id}`;
+
+          dataStore.push({
+            id: id,
+            title: title.substring(0, 40) + (title.length > 40 ? "..." : ""),
+            data: data,
+          });
+
+          renderIdList();
+
+          successText.textContent = `Added as ID #${id} to the list!`;
+          successMsg.classList.add("show");
+
+          // Clear input after adding
+          document.getElementById("jsonInput").value = "";
+        } catch (e) {
+          errorText.textContent = "Invalid JSON: " + e.message;
+          errorMsg.classList.add("show");
+        }
+      }
+
+      // Render ID list in sidebar
+      function renderIdList() {
+        const idList = document.getElementById("idList");
+        const idCount = document.getElementById("idCount");
+
+        idCount.textContent = dataStore.length;
+
+        if (dataStore.length === 0) {
+          idList.innerHTML = `
+                    <div class="empty-state" style="padding: 30px 10px;">
+                        <p>No data loaded yet</p>
+                    </div>
+                `;
+          return;
+        }
+
+        idList.innerHTML = dataStore
+          .map(
+            (item) => `
+                <div class="id-item ${
+                  activeId === item.id ? "active" : ""
+                }" onclick="selectId(${item.id})">
+                    <div class="id-number">${item.id}</div>
+                    <div class="id-label">${item.title}</div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Select an ID from the list
+      function selectId(id) {
+        activeId = id;
+        // Find item with loose equality to handle string/number differences
+        const item = dataStore.find((d) => d.id == id);
+
+        console.log('selectId called with:', id);
+        console.log('Found item:', item);
+
+        if (item) {
+          currentData = item.data;
+          
+          console.log('Item data:', item.data);
+          console.log('Item data type:', typeof item.data);
+          console.log('Item data keys:', item.data ? Object.keys(item.data) : 'null');
+          
+          document.getElementById("jsonInput").value = JSON.stringify(
+            item.data,
+            null,
+            2
+          );
+          renderParsedContent(item.data);
+          renderPlainText(item.data);
+          renderIdList();
+
+          // Switch to Plain Text tab (index 2) for Excel loaded data
+          document.querySelectorAll(".tab-btn")[2].click();
+        } else {
+          console.warn('No item found for ID:', id);
+        }
+      }
+
+      // Render parsed content with styled sections
+      function renderParsedContent(data) {
+        const output = document.getElementById("parsedOutput");
+        let html = "";
+
+        // Taglines
+        if (data.taglines && Array.isArray(data.taglines)) {
+          html += `
+                    <div class="parsed-section fade-in">
+                        <div class="section-header">
+                            <div class="section-icon taglines">🏷️</div>
+                            <span class="section-title">Taglines</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="taglines-container">
+                                ${data.taglines
+                                  .map(
+                                    (tag) =>
+                                      `<span class="tagline-chip">${escapeHtml(
+                                        tag
+                                      )}</span>`
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Meta Title & Description
+        if (data.meta_title || data.meta_description) {
+          html += `
+                    <div class="parsed-section fade-in">
+                        <div class="section-header">
+                            <div class="section-icon meta">📌</div>
+                            <span class="section-title">Meta Information</span>
+                        </div>
+                        <div class="section-content">
+                            ${
+                              data.meta_title
+                                ? `<p><strong>Title:</strong> ${escapeHtml(
+                                    data.meta_title
+                                  )}</p>`
+                                : ""
+                            }
+                            ${
+                              data.meta_description
+                                ? `<p><strong>Description:</strong> ${escapeHtml(
+                                    data.meta_description
+                                  )}</p>`
+                                : ""
+                            }
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Benefits
+        if (data.benefits) {
+          html += renderContentSection(
+            data.benefits,
+            "Benefits",
+            "benefits",
+            "⭐"
+          );
+        }
+
+        // When to Recite
+        if (data.when_to_recite) {
+          html += renderContentSection(
+            data.when_to_recite,
+            "When to Recite",
+            "when",
+            "⏰"
+          );
+        }
+
+        // How to Perform
+        if (data.how_to_perform) {
+          html += renderContentSection(
+            data.how_to_perform,
+            "How to Perform",
+            "how",
+            "📝"
+          );
+        }
+
+        // Summary
+        if (data.summary && Array.isArray(data.summary)) {
+          html += `
+                    <div class="parsed-section fade-in">
+                        <div class="section-header">
+                            <div class="section-icon summary">📖</div>
+                            <span class="section-title">Summary</span>
+                        </div>
+                        <div class="section-content">
+                            ${data.summary
+                              .map((p) => `<p>${escapeHtml(p)}</p>`)
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+        }
+
+        // FAQs
+        if (data.faqs && Array.isArray(data.faqs)) {
+          html += `
+                    <div class="parsed-section fade-in">
+                        <div class="section-header">
+                            <div class="section-icon faq">❓</div>
+                            <span class="section-title">Frequently Asked Questions</span>
+                        </div>
+                        <div class="section-content">
+                            ${data.faqs
+                              .map(
+                                (faq) => `
+                                <div class="faq-item">
+                                    <div class="faq-question">${escapeHtml(
+                                      faq.question
+                                    )}</div>
+                                    <div class="faq-answer">${escapeHtml(
+                                      faq.answer
+                                    )}</div>
+                                </div>
+                            `
+                              )
+                              .join("")}
+                        </div>
+                    </div>
+                `;
+        }
+
+        if (!html) {
+          // Debug: show what keys we have
+          console.log('Data has no recognized sections. Keys available:', Object.keys(data));
+          console.log('Full data:', data);
+          
+          // Fallback: show raw data in a formatted way
+          html = `
+                    <div class="parsed-section fade-in">
+                        <div class="section-header">
+                            <div class="section-icon meta">📄</div>
+                            <span class="section-title">Raw JSON Data</span>
+                        </div>
+                        <div class="section-content">
+                            <p><strong>Available keys:</strong> ${Object.keys(data).join(', ')}</p>
+                            <pre style="background: var(--bg-input); padding: 16px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; max-height: 400px; overflow-y: auto;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+                        </div>
+                    </div>
+                `;
+        }
+
+        output.innerHTML = html;
+      }
+
+      // Helper to render a single section item
+      function renderSingleSection(section, label, iconClass, emoji) {
+        return `
+                <div class="parsed-section fade-in">
+                    <div class="section-header">
+                        <div class="section-icon ${iconClass}">${emoji}</div>
+                        <span class="section-title">${
+                          section.title || label
+                        }</span>
+                    </div>
+                    <div class="section-content">
+                        ${
+                          section.subtitle
+                            ? `<p class="subtitle">${escapeHtml(
+                                section.subtitle
+                              )}</p>`
+                            : ""
+                        }
+                        ${
+                          section.content && Array.isArray(section.content)
+                            ? `
+                            <ul class="content-list">
+                                ${section.content
+                                  .map((item) => `<li>${escapeHtml(item)}</li>`)
+                                  .join("")}
+                            </ul>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+            `;
+      }
+
+      // Helper to render content sections (benefits, when, how) - handles both object and array formats
+      function renderContentSection(section, label, iconClass, emoji) {
+        // Handle array format: [{ title, subtitle, content }]
+        if (Array.isArray(section)) {
+          return section.map(item => renderSingleSection(item, label, iconClass, emoji)).join("");
+        }
+        // Handle single object format: { title, subtitle, content }
+        return renderSingleSection(section, label, iconClass, emoji);
+      }
+
+      // Helper to add section text (handles both object and array formats)
+      function addSectionText(text, section, label) {
+        if (!section) return;
+
+        // Handle array format: [{ title, subtitle, content }]
+        if (Array.isArray(section)) {
+          section.forEach((item, idx) => {
+            if (idx === 0) text.push(`${label}:`);
+            if (item.title) text.push(item.title);
+            if (item.subtitle) text.push(item.subtitle);
+            if (item.content && Array.isArray(item.content)) {
+              item.content.forEach((c, i) => {
+                text.push(`${i + 1}. ${c}`);
+              });
+            }
+            text.push("");
+          });
+        }
+        // Handle single object format: { title, subtitle, content }
+        else if (typeof section === 'object') {
+          text.push(`${label}:`);
+          if (section.title) text.push(section.title);
+          if (section.subtitle) text.push(section.subtitle);
+          if (section.content && Array.isArray(section.content)) {
+            section.content.forEach((item, i) => {
+              text.push(`${i + 1}. ${item}`);
+            });
+          }
+          text.push("");
+        }
+      }
+
+      // Render plain text output
+      function renderPlainText(data) {
+        const output = document.getElementById("textOutput");
+        let text = [];
+
+        // Taglines
+        if (data.taglines && Array.isArray(data.taglines)) {
+          text.push("TAGLINES:");
+          text.push(data.taglines.join(", "));
+          text.push("");
+        }
+
+        // Meta
+        if (data.meta_title) {
+          text.push("META TITLE:");
+          text.push(data.meta_title);
+          text.push("");
+        }
+
+        if (data.meta_description) {
+          text.push("META DESCRIPTION:");
+          text.push(data.meta_description);
+          text.push("");
+        }
+
+        // Benefits (handles both object and array format)
+        addSectionText(text, data.benefits, "BENEFITS");
+
+        // When to Recite (handles both object and array format)
+        addSectionText(text, data.when_to_recite, "WHEN TO RECITE");
+
+        // How to Perform (handles both object and array format)
+        addSectionText(text, data.how_to_perform, "HOW TO PERFORM");
+
+        // Summary
+        if (data.summary && Array.isArray(data.summary)) {
+          text.push("SUMMARY:");
+          data.summary.forEach((p) => text.push(p));
+          text.push("");
+        }
+
+        // FAQs
+        if (data.faqs && Array.isArray(data.faqs)) {
+          text.push("FREQUENTLY ASKED QUESTIONS:");
+          data.faqs.forEach((faq, i) => {
+            text.push(`Q${i + 1}: ${faq.question}`);
+            text.push(`A${i + 1}: ${faq.answer}`);
+            text.push("");
+          });
+        }
+
+        output.textContent = text.join("\n");
+      }
+
+      // Copy functions
+      function copyParsed() {
+        const output = document.getElementById("parsedOutput");
+        const text = output.innerText;
+        copyToClipboard(text, "Parsed content copied!");
+      }
+
+      function copyText() {
+        const text = document.getElementById("textOutput").textContent;
+        copyToClipboard(text, "Plain text copied!");
+      }
+
+      function copyToClipboard(text, message) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            showToast(message);
+          })
+          .catch(() => {
+            // Fallback
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            showToast(message);
+          });
+      }
+
+      function showToast(message) {
+        const successMsg = document.getElementById("successMsg");
+        const successText = document.getElementById("successText");
+        successText.textContent = message;
+        successMsg.classList.add("show");
+        setTimeout(() => successMsg.classList.remove("show"), 2000);
+      }
+
+      // Load sample data
+      function loadSampleData() {
+        document.getElementById("jsonInput").value = JSON.stringify(
+          sampleData,
+          null,
+          2
+        );
+        document.getElementById("successMsg").classList.remove("show");
+        document.getElementById("errorMsg").classList.remove("show");
+      }
+
+      // Clear all
+      function clearAll() {
+        dataStore = [];
+        currentData = null;
+        activeId = null;
+        document.getElementById("jsonInput").value = "";
+        document.getElementById("textOutput").textContent =
+          "Parse JSON to see plain text output here...";
+        document.getElementById("parsedOutput").innerHTML = `
+                <div class="empty-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <h3>No Content Yet</h3>
+                    <p>Paste JSON in the input tab and click "Parse JSON"</p>
+                </div>
+            `;
+        renderIdList();
+        document.getElementById("errorMsg").classList.remove("show");
+        document.getElementById("successMsg").classList.remove("show");
+      }
+
+      // Escape HTML
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Handle Excel file upload
+      function handleExcelUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingProgress = document.getElementById("loadingProgress");
+        
+        loadingOverlay.classList.add("show");
+        loadingProgress.textContent = "Reading file...";
+
+        const reader = new FileReader();
+        
+        reader.onload = function (e) {
+          try {
+            loadingProgress.textContent = "Parsing Excel data...";
+            
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            
+            // Get first sheet
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            
+            // Convert to JSON
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            
+            loadingProgress.textContent = `Found ${jsonData.length} rows. Processing...`;
+            
+            // Clear existing data
+            dataStore = [];
+            activeId = null;
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            // Process each row
+            jsonData.forEach((row, index) => {
+              // Look for ID column (case-insensitive)
+              let id = row.ID || row.id || row.Id || (index + 1);
+              
+              // Look for input/JSON column (case-insensitive)
+              let jsonStr = row.input || row.Input || row.INPUT || 
+                           row.json || row.JSON || row.Json ||
+                           row.content || row.Content || row.CONTENT ||
+                           row.data || row.Data || row.DATA;
+              
+              if (jsonStr) {
+                try {
+                  let parsedData;
+                  
+                  // Handle different formats
+                  if (typeof jsonStr === 'object') {
+                    // Already an object
+                    parsedData = jsonStr;
+                  } else if (typeof jsonStr === 'string') {
+                    // Clean the string first
+                    let cleanStr = jsonStr.trim();
+                    
+                    // Remove potential BOM or weird characters
+                    cleanStr = cleanStr.replace(/^\uFEFF/, '');
+                    
+                    // Try to parse
+                    parsedData = JSON.parse(cleanStr);
+                  } else {
+                    throw new Error('Unknown data type');
+                  }
+                  
+                  // Debug: log first item to console
+                  if (index === 0) {
+                    console.log('First row data:', parsedData);
+                    console.log('Keys:', Object.keys(parsedData));
+                  }
+                  
+                  // Get title for display - check multiple possible fields
+                  let title = parsedData.meta_title || 
+                             parsedData.title ||
+                             parsedData.meta?.title ||
+                             (parsedData.taglines && Array.isArray(parsedData.taglines) && parsedData.taglines[0]) ||
+                             (parsedData.meta_description && parsedData.meta_description.substring(0, 40)) ||
+                             `Data #${id}`;
+                  
+                  // Ensure title is a string
+                  title = String(title);
+                  
+                  dataStore.push({
+                    id: id,
+                    title: title.substring(0, 40) + (title.length > 40 ? '...' : ''),
+                    data: parsedData
+                  });
+                  
+                  successCount++;
+                } catch (parseError) {
+                  console.warn(`Row ${index + 1}: Invalid JSON - ${parseError.message}`);
+                  console.warn('Raw data:', jsonStr);
+                  errorCount++;
+                }
+              }
+              
+              // Update progress
+              if ((index + 1) % 50 === 0 || index === jsonData.length - 1) {
+                loadingProgress.textContent = `Processing row ${index + 1} of ${jsonData.length}...`;
+              }
+            });
+            
+            // Render the ID list
+            renderIdList();
+            
+            // Hide loading
+            loadingOverlay.classList.remove("show");
+            
+            // Show success message
+            const successMsg = document.getElementById("successMsg");
+            const successText = document.getElementById("successText");
+            successText.textContent = `✅ Loaded ${successCount} items from Excel!${errorCount > 0 ? ` (${errorCount} rows had invalid JSON)` : ''}`;
+            successMsg.classList.add("show");
+            setTimeout(() => successMsg.classList.remove("show"), 4000);
+            
+            // Reset file input
+            event.target.value = "";
+            
+            // Don't auto-select, let user click on an ID
+            // Switch to input tab but user will click ID to see plain text
+            
+          } catch (error) {
+            loadingOverlay.classList.remove("show");
+            
+            const errorMsg = document.getElementById("errorMsg");
+            const errorText = document.getElementById("errorText");
+            errorText.textContent = "Error reading Excel file: " + error.message;
+            errorMsg.classList.add("show");
+            
+            event.target.value = "";
+          }
+        };
+        
+        reader.onerror = function () {
+          loadingOverlay.classList.remove("show");
+          
+          const errorMsg = document.getElementById("errorMsg");
+          const errorText = document.getElementById("errorText");
+          errorText.textContent = "Error reading file. Please try again.";
+          errorMsg.classList.add("show");
+          
+          event.target.value = "";
+        };
+        
+        reader.readAsArrayBuffer(file);
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        if (e.ctrlKey && e.key === "Enter") {
+          parseJSON();
+        }
+      });
+
+      // Initialize
+      renderIdList();
+    </script>
+  </body>
+</html>
