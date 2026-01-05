@@ -978,6 +978,277 @@
         color: var(--text-muted);
         font-size: 0.875rem;
       }
+
+      /* Edit Mode Styles */
+      .text-output-editable {
+        background: var(--bg-input);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.875rem;
+        line-height: 1.8;
+        color: var(--text-white);
+        white-space: pre-wrap;
+        min-height: 500px;
+        max-height: calc(100vh - 400px);
+        overflow-y: auto;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        width: 100%;
+        resize: vertical;
+      }
+
+      .text-output-editable:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+      }
+
+      .text-output-editable.modified {
+        border-color: var(--accent);
+      }
+
+      .btn-save {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+        border: 1px solid var(--secondary);
+        box-shadow: none;
+      }
+
+      .btn-save:hover {
+        transform: translateY(-1px);
+        background: rgba(16, 185, 129, 0.2);
+      }
+
+      .btn-save:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-edit {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        box-shadow: none;
+      }
+
+      .btn-edit:hover {
+        transform: translateY(-1px);
+        background: var(--bg-card-hover);
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .btn-edit.active {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+
+      /* Icon-only buttons */
+      .btn-icon {
+        padding: 10px;
+        min-width: 40px;
+        height: 40px;
+        justify-content: center;
+      }
+
+      .btn-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .edit-status {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      .edit-status.editing {
+        background: var(--accent-light);
+        color: var(--accent);
+      }
+
+      .edit-status.saved {
+        background: var(--secondary-light);
+        color: var(--secondary);
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .btn-download {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        box-shadow: none;
+      }
+
+      .btn-download:hover {
+        transform: translateY(-1px);
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border-color: #3b82f6;
+      }
+
+      .btn-download:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-select {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        box-shadow: none;
+      }
+
+      .btn-select:hover {
+        transform: translateY(-1px);
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+        border-color: var(--secondary);
+      }
+
+      .btn-select.selected {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--secondary);
+        border-color: var(--secondary);
+      }
+
+      .btn-delete {
+        background: var(--bg-card);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        box-shadow: none;
+      }
+
+      .btn-delete:hover {
+        transform: translateY(-1px);
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+
+      .id-item.selected {
+        background: var(--secondary-light);
+        border-color: var(--secondary);
+      }
+
+      .id-item.selected .id-number {
+        background: var(--secondary);
+        color: white;
+      }
+
+      .id-item.deleted {
+        opacity: 0.4;
+        text-decoration: line-through;
+        pointer-events: none;
+      }
+
+      .selected-badge {
+        background: var(--secondary);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: 8px;
+      }
+
+      .deleted-badge {
+        background: var(--danger);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        margin-left: 8px;
+      }
+
+      .column-info {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        margin-top: 4px;
+      }
+
+      /* Animated Copy Toast */
+      .copy-toast {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.5);
+        background: linear-gradient(135deg, var(--secondary), #059669);
+        color: white;
+        padding: 20px 40px;
+        border-radius: var(--radius-lg);
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 20px 60px rgba(16, 185, 129, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 10000;
+      }
+
+      .copy-toast.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .copy-toast svg {
+        width: 28px;
+        height: 28px;
+        animation: checkmark 0.4s ease-out 0.1s forwards;
+      }
+
+      @keyframes checkmark {
+        0% {
+          stroke-dashoffset: 50;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .copy-toast svg path {
+        stroke-dasharray: 50;
+        stroke-dashoffset: 50;
+      }
+
+      .copy-toast::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        background: linear-gradient(135deg, var(--secondary), #059669);
+        border-radius: var(--radius-xl);
+        z-index: -1;
+        opacity: 0;
+        animation: pulse-ring 0.6s ease-out;
+      }
+
+      @keyframes pulse-ring {
+        0% {
+          opacity: 0.8;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.3);
+        }
+      }
     </style>
   </head>
 
@@ -1041,7 +1312,7 @@
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              📊 Load Excel
+              Load Excel
             </button>
             <input
               type="file"
@@ -1050,6 +1321,28 @@
               onchange="handleExcelUpload(event)"
             />
           </div>
+          <button
+            class="btn btn-download"
+            id="downloadExcelBtn"
+            onclick="downloadExcel()"
+            style="display: none"
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Download
+          </button>
           <button class="btn btn-secondary" onclick="clearAll()">
             <svg
               width="16"
@@ -1321,29 +1614,100 @@
                   />
                 </svg>
                 Plain Text Output
+                <span
+                  class="edit-status"
+                  id="editStatus"
+                  style="display: none"
+                ></span>
               </div>
-              <button class="btn btn-secondary" onclick="copyText()">
-                <svg
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div class="header-buttons">
+                <button
+                  class="btn btn-select btn-icon"
+                  id="selectToggleBtn"
+                  onclick="toggleSelectStatus()"
+                  title="Select"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-                Copy Text
-              </button>
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="btn btn-delete btn-icon"
+                  id="deleteRowBtn"
+                  onclick="deleteCurrentRow()"
+                  title="Delete"
+                >
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="btn btn-edit btn-icon"
+                  id="editToggleBtn"
+                  onclick="toggleEditMode()"
+                  title="Edit"
+                >
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="btn btn-save btn-icon"
+                  id="saveChangesBtn"
+                  onclick="saveTextChanges()"
+                  style="display: none"
+                  title="Save"
+                >
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="btn btn-secondary btn-icon"
+                  onclick="copyText()"
+                  title="Copy"
+                >
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="output-content">
               <div class="text-output" id="textOutput">
                 Parse JSON to see plain text output here...
               </div>
+              <textarea
+                class="text-output-editable"
+                id="textOutputEditable"
+                style="display: none"
+                oninput="onTextEdit()"
+              ></textarea>
             </div>
           </div>
         </div>
@@ -1355,6 +1719,19 @@
       <div class="loading-spinner"></div>
       <div class="loading-text">Loading Excel File...</div>
       <div class="loading-progress" id="loadingProgress">Please wait</div>
+    </div>
+
+    <!-- Copy Toast -->
+    <div class="copy-toast" id="copyToast">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="3"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span id="copyToastText">Copied!</span>
     </div>
 
     <script>
@@ -1382,6 +1759,13 @@
       let dataStore = [];
       let currentData = null;
       let activeId = null;
+
+      // Original Excel data for smart update
+      let originalWorkbook = null;
+      let originalSheetName = null;
+      let columnHeaders = { id: "ID", content: "input" }; // Dynamic headers
+      let deletedIds = new Set(); // Track deleted rows
+      let selectedIds = new Set(); // Track selected rows
 
       // IndexedDB setup
       const DB_NAME = "JsonParserDB";
@@ -1427,6 +1811,10 @@
           store.put({ key: "dataStore", value: dataStore });
           // Save activeId
           store.put({ key: "activeId", value: activeId });
+          // Save selected and deleted IDs
+          store.put({ key: "selectedIds", value: Array.from(selectedIds) });
+          store.put({ key: "deletedIds", value: Array.from(deletedIds) });
+          store.put({ key: "columnHeaders", value: columnHeaders });
 
           transaction.oncomplete = () => {
             console.log("Data saved to IndexedDB:", dataStore.length, "items");
@@ -1451,10 +1839,16 @@
 
             const dataRequest = store.get("dataStore");
             const activeIdRequest = store.get("activeId");
+            const selectedIdsRequest = store.get("selectedIds");
+            const deletedIdsRequest = store.get("deletedIds");
+            const columnHeadersRequest = store.get("columnHeaders");
 
             transaction.oncomplete = () => {
               const savedData = dataRequest.result;
               const savedActiveId = activeIdRequest.result;
+              const savedSelectedIds = selectedIdsRequest.result;
+              const savedDeletedIds = deletedIdsRequest.result;
+              const savedColumnHeaders = columnHeadersRequest.result;
 
               console.log(
                 "Loading from IndexedDB, found data:",
@@ -1465,10 +1859,32 @@
                 dataStore = savedData.value;
                 console.log("Parsed dataStore:", dataStore.length, "items");
                 activeId = savedActiveId ? savedActiveId.value : null;
+
+                // Restore selected and deleted IDs
+                if (savedSelectedIds && savedSelectedIds.value) {
+                  selectedIds = new Set(savedSelectedIds.value);
+                }
+                if (savedDeletedIds && savedDeletedIds.value) {
+                  deletedIds = new Set(savedDeletedIds.value);
+                }
+                if (savedColumnHeaders && savedColumnHeaders.value) {
+                  columnHeaders = savedColumnHeaders.value;
+                }
+
                 renderIdList();
 
+                // Show download button if data exists
+                if (dataStore.length > 0) {
+                  document.getElementById("downloadExcelBtn").style.display =
+                    "inline-flex";
+                }
+
                 // If there was an active item, restore it
-                if (activeId && dataStore.length > 0) {
+                if (
+                  activeId &&
+                  dataStore.length > 0 &&
+                  !deletedIds.has(activeId)
+                ) {
                   selectId(activeId);
                 }
               }
@@ -1683,7 +2099,11 @@
         const idList = document.getElementById("idList");
         const idCount = document.getElementById("idCount");
 
-        idCount.textContent = dataStore.length;
+        // Count non-deleted items
+        const activeCount = dataStore.filter(
+          (d) => !deletedIds.has(d.id)
+        ).length;
+        idCount.textContent = activeCount;
 
         if (dataStore.length === 0) {
           idList.innerHTML = `
@@ -1695,22 +2115,59 @@
         }
 
         idList.innerHTML = dataStore
-          .map(
-            (item) => `
-                <div class="id-item ${
-                  activeId === item.id ? "active" : ""
-                }" onclick="selectId(${item.id})">
+          .map((item) => {
+            const isDeleted = deletedIds.has(item.id);
+            const isSelected = selectedIds.has(item.id);
+            const isActive = activeId === item.id;
+
+            let classes = "id-item";
+            if (isActive) classes += " active";
+            if (isSelected) classes += " selected";
+            if (isDeleted) classes += " deleted";
+
+            let badges = "";
+            if (isSelected) badges += '<span class="selected-badge">✓</span>';
+            if (isDeleted)
+              badges += '<span class="deleted-badge">Deleted</span>';
+
+            return `
+                <div class="${classes}" onclick="${
+              isDeleted ? "" : "selectId(" + item.id + ")"
+            }">
                     <div class="id-number">${item.id}</div>
-                    <div class="id-label">${item.title}</div>
+                    <div class="id-label">${item.title}${badges}</div>
                 </div>
-            `
-          )
+            `;
+          })
           .join("");
       }
 
       // Select an ID from the list
       function selectId(id) {
+        // Skip if deleted
+        if (deletedIds.has(id)) return;
+
+        // Reset edit mode if active
+        if (isEditMode) {
+          isEditMode = false;
+          document.getElementById("textOutput").style.display = "block";
+          document.getElementById("textOutputEditable").style.display = "none";
+          document.getElementById("editToggleBtn").classList.remove("active");
+          document.getElementById("saveChangesBtn").style.display = "none";
+          document.getElementById("editStatus").style.display = "none";
+          hasUnsavedChanges = false;
+        }
+
         activeId = id;
+
+        // Update select button state
+        const selectBtn = document.getElementById("selectToggleBtn");
+        if (selectedIds.has(id)) {
+          selectBtn.classList.add("selected");
+        } else {
+          selectBtn.classList.remove("selected");
+        }
+
         // Find item with loose equality to handle string/number differences
         const item = dataStore.find((d) => d.id == id);
 
@@ -2143,7 +2600,10 @@
       }
 
       function copyText() {
-        const text = document.getElementById("textOutput").textContent;
+        // Copy from editable if in edit mode, otherwise from display
+        const text = isEditMode
+          ? document.getElementById("textOutputEditable").value
+          : document.getElementById("textOutput").textContent;
         copyToClipboard(text, "Plain text copied!");
       }
 
@@ -2166,11 +2626,35 @@
       }
 
       function showToast(message) {
-        const successMsg = document.getElementById("successMsg");
-        const successText = document.getElementById("successText");
-        successText.textContent = message;
-        successMsg.classList.add("show");
-        setTimeout(() => successMsg.classList.remove("show"), 2000);
+        // Check if it's a copy message
+        if (message.toLowerCase().includes("copied")) {
+          showCopyToast(message);
+        } else {
+          // Use the regular success message for other notifications
+          const successMsg = document.getElementById("successMsg");
+          const successText = document.getElementById("successText");
+          successText.textContent = message;
+          successMsg.classList.add("show");
+          setTimeout(() => successMsg.classList.remove("show"), 2000);
+        }
+      }
+
+      function showCopyToast(message) {
+        const toast = document.getElementById("copyToast");
+        const toastText = document.getElementById("copyToastText");
+
+        toastText.textContent = message || "Copied!";
+        toast.classList.add("show");
+
+        // Reset SVG animation
+        const svg = toast.querySelector("svg path");
+        svg.style.animation = "none";
+        svg.offsetHeight; // Trigger reflow
+        svg.style.animation = "";
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 1500);
       }
 
       // Load sample data
@@ -2189,10 +2673,26 @@
         dataStore = [];
         currentData = null;
         activeId = null;
+        isEditMode = false;
+        hasUnsavedChanges = false;
+        originalWorkbook = null;
+        originalSheetName = null;
+        deletedIds = new Set();
+        selectedIds = new Set();
+        columnHeaders = { id: "ID", content: "input" };
         clearStorage();
         document.getElementById("jsonInput").value = "";
         document.getElementById("textOutput").textContent =
           "Parse JSON to see plain text output here...";
+        document.getElementById("textOutput").style.display = "block";
+        document.getElementById("textOutputEditable").style.display = "none";
+        document.getElementById("textOutputEditable").value = "";
+        document.getElementById("editToggleBtn").classList.remove("active");
+        document.getElementById("saveChangesBtn").style.display = "none";
+        document.getElementById("editStatus").style.display = "none";
+        document.getElementById("downloadExcelBtn").style.display = "none";
+        // Reset select button
+        document.getElementById("selectToggleBtn").classList.remove("selected");
         document.getElementById("parsedOutput").innerHTML = `
                 <div class="empty-state">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2235,9 +2735,30 @@
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: "array" });
 
+            // Store original workbook for smart update
+            originalWorkbook = workbook;
+
             // Get first sheet
             const sheetName = workbook.SheetNames[0];
+            originalSheetName = sheetName;
             const worksheet = workbook.Sheets[sheetName];
+
+            // Extract actual column headers (Row 1)
+            const range = XLSX.utils.decode_range(worksheet["!ref"] || "A1");
+            const headers = [];
+            for (let col = range.s.c; col <= range.e.c; col++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+              const cell = worksheet[cellAddress];
+              headers.push(cell ? cell.v : `Column${col + 1}`);
+            }
+
+            // Set dynamic column headers (Column A = ID, Column B = Content)
+            columnHeaders = {
+              id: headers[0] || "ID",
+              content: headers[1] || "input",
+              all: headers, // Store all headers
+            };
+            console.log("Detected headers:", columnHeaders);
 
             // Convert to JSON
             const jsonData = XLSX.utils.sheet_to_json(worksheet);
@@ -2247,17 +2768,31 @@
             // Clear existing data
             dataStore = [];
             activeId = null;
+            deletedIds = new Set();
+            selectedIds = new Set();
 
             let successCount = 0;
             let errorCount = 0;
 
             // Process each row
             jsonData.forEach((row, index) => {
-              // Look for ID column (case-insensitive)
-              let id = row.ID || row.id || row.Id || index + 1;
+              // Use dynamic header for ID column (Column A)
+              let id =
+                row[columnHeaders.id] ||
+                row.ID ||
+                row.id ||
+                row.Id ||
+                index + 1;
 
-              // Look for input/JSON column (case-insensitive)
+              // Check if row has existing Status
+              const existingStatus = row.Status || row.status || row.STATUS;
+              if (existingStatus === "Selected") {
+                selectedIds.add(id);
+              }
+
+              // Use dynamic header for content column (Column B)
               let jsonStr =
+                row[columnHeaders.content] ||
                 row.input ||
                 row.Input ||
                 row.INPUT ||
@@ -2318,6 +2853,8 @@
                     title:
                       title.substring(0, 40) + (title.length > 40 ? "..." : ""),
                     data: parsedData,
+                    rowIndex: index + 2, // Excel row number (1-indexed, +1 for header)
+                    modified: false,
                   });
 
                   successCount++;
@@ -2354,6 +2891,10 @@
             successMsg.classList.add("show");
             setTimeout(() => successMsg.classList.remove("show"), 4000);
 
+            // Show download button
+            document.getElementById("downloadExcelBtn").style.display =
+              "inline-flex";
+
             // Reset file input
             event.target.value = "";
 
@@ -2386,10 +2927,470 @@
         reader.readAsArrayBuffer(file);
       }
 
+      // Download updated Excel file with smart update
+      function downloadExcel() {
+        if (dataStore.length === 0) {
+          showToast("No data to download!");
+          return;
+        }
+
+        try {
+          let wb, ws;
+
+          if (originalWorkbook && originalSheetName) {
+            // Smart Update: Modify the original workbook
+            wb = XLSX.utils.book_new();
+            const originalWs = originalWorkbook.Sheets[originalSheetName];
+
+            // Get all data from original sheet
+            const originalData = XLSX.utils.sheet_to_json(originalWs, {
+              header: 1,
+            });
+            const headers = originalData[0] || [];
+
+            // Find or add Status column
+            let statusColIndex = headers.findIndex(
+              (h) => h && h.toString().toLowerCase() === "status"
+            );
+            if (statusColIndex === -1) {
+              statusColIndex = headers.length;
+              headers.push("Status");
+            }
+
+            // Find content column index
+            const contentColIndex =
+              headers.findIndex(
+                (h) =>
+                  h &&
+                  h.toString().toLowerCase() ===
+                    columnHeaders.content.toLowerCase()
+              ) || 1;
+
+            // Build updated data
+            const updatedData = [headers];
+
+            // Process original rows (skip header)
+            for (let i = 1; i < originalData.length; i++) {
+              const row = originalData[i];
+              const rowId = row[0]; // Column A is ID
+
+              // Skip deleted rows
+              if (deletedIds.has(rowId)) {
+                continue;
+              }
+
+              // Find matching item in dataStore
+              const item = dataStore.find((d) => d.id == rowId);
+
+              // Ensure row has enough columns
+              while (row.length < headers.length) {
+                row.push("");
+              }
+
+              if (item && item.modified) {
+                // Update the content column with modified data
+                row[contentColIndex] = JSON.stringify(item.data);
+              }
+
+              // Update Status column
+              if (selectedIds.has(rowId)) {
+                row[statusColIndex] = "Selected";
+              }
+
+              updatedData.push(row);
+            }
+
+            // Create worksheet from updated data
+            ws = XLSX.utils.aoa_to_sheet(updatedData);
+
+            // Preserve column widths from original if available
+            if (originalWs["!cols"]) {
+              ws["!cols"] = [...originalWs["!cols"]];
+              // Add width for Status column if new
+              if (ws["!cols"].length < headers.length) {
+                ws["!cols"].push({ wch: 15 });
+              }
+            }
+          } else {
+            // Fallback: Create new file if no original
+            const headers = [columnHeaders.id, columnHeaders.content, "Status"];
+            const wsData = [headers];
+
+            dataStore.forEach((item) => {
+              if (!deletedIds.has(item.id)) {
+                wsData.push([
+                  item.id,
+                  JSON.stringify(item.data),
+                  selectedIds.has(item.id) ? "Selected" : "",
+                ]);
+              }
+            });
+
+            ws = XLSX.utils.aoa_to_sheet(wsData);
+            ws["!cols"] = [{ wch: 10 }, { wch: 100 }, { wch: 15 }];
+          }
+
+          // Create workbook and add sheet
+          wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, originalSheetName || "Data");
+
+          // Generate filename with timestamp
+          const now = new Date();
+          const timestamp = now.toISOString().slice(0, 10).replace(/-/g, "");
+          const filename = `updated_data_${timestamp}.xlsx`;
+
+          // Download file
+          XLSX.writeFile(wb, filename);
+
+          const selectedCount = selectedIds.size;
+          const deletedCount = deletedIds.size;
+          showToast(
+            `✅ Downloaded! ${selectedCount} selected, ${deletedCount} deleted`
+          );
+        } catch (error) {
+          console.error("Error downloading Excel:", error);
+          showToast("Error creating Excel file: " + error.message);
+        }
+      }
+
+      // Toggle select status for current item
+      function toggleSelectStatus() {
+        if (!activeId) {
+          showToast("No item selected!");
+          return;
+        }
+
+        const selectBtn = document.getElementById("selectToggleBtn");
+
+        if (selectedIds.has(activeId)) {
+          selectedIds.delete(activeId);
+          selectBtn.classList.remove("selected");
+          showToast("Item unselected");
+        } else {
+          selectedIds.add(activeId);
+          selectBtn.classList.add("selected");
+          showToast("Item marked as Selected!");
+        }
+
+        // Update sidebar
+        renderIdList();
+        saveToStorage();
+      }
+
+      // Delete current row
+      function deleteCurrentRow() {
+        if (!activeId) {
+          showToast("No item selected!");
+          return;
+        }
+
+        if (confirm(`Are you sure you want to delete item #${activeId}?`)) {
+          deletedIds.add(activeId);
+
+          // Move to next available item
+          const currentIndex = dataStore.findIndex((d) => d.id == activeId);
+          let nextItem = null;
+
+          // Find next non-deleted item
+          for (let i = currentIndex + 1; i < dataStore.length; i++) {
+            if (!deletedIds.has(dataStore[i].id)) {
+              nextItem = dataStore[i];
+              break;
+            }
+          }
+          // If no next, find previous
+          if (!nextItem) {
+            for (let i = currentIndex - 1; i >= 0; i--) {
+              if (!deletedIds.has(dataStore[i].id)) {
+                nextItem = dataStore[i];
+                break;
+              }
+            }
+          }
+
+          renderIdList();
+          saveToStorage();
+
+          if (nextItem) {
+            selectId(nextItem.id);
+          } else {
+            activeId = null;
+            document.getElementById("textOutput").textContent =
+              "No items remaining...";
+          }
+
+          showToast(`Item #${activeId} marked for deletion`);
+        }
+      }
+
+      // Edit mode state
+      let isEditMode = false;
+      let originalText = "";
+      let hasUnsavedChanges = false;
+
+      // Toggle edit mode
+      function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const textOutput = document.getElementById("textOutput");
+        const textEditable = document.getElementById("textOutputEditable");
+        const editBtn = document.getElementById("editToggleBtn");
+        const saveBtn = document.getElementById("saveChangesBtn");
+        const editStatus = document.getElementById("editStatus");
+
+        if (isEditMode) {
+          // Switch to edit mode
+          originalText = textOutput.textContent;
+          textEditable.value = originalText;
+          textOutput.style.display = "none";
+          textEditable.style.display = "block";
+          saveBtn.style.display = "inline-flex";
+          saveBtn.disabled = false; // Enable save button when entering edit mode
+          editBtn.classList.add("active");
+          editStatus.textContent = "Editing...";
+          editStatus.className = "edit-status editing";
+          editStatus.style.display = "inline-block";
+          textEditable.focus();
+        } else {
+          // Exit edit mode
+          textOutput.style.display = "block";
+          textEditable.style.display = "none";
+          saveBtn.style.display = "none";
+          saveBtn.disabled = true;
+          editBtn.classList.remove("active");
+          editStatus.style.display = "none";
+          hasUnsavedChanges = false;
+          textEditable.classList.remove("modified");
+        }
+      }
+
+      // Track text edits
+      function onTextEdit() {
+        const textEditable = document.getElementById("textOutputEditable");
+        const saveBtn = document.getElementById("saveChangesBtn");
+
+        hasUnsavedChanges = true;
+        saveBtn.disabled = false;
+        textEditable.classList.add("modified");
+      }
+
+      // Parse plain text back to JSON structure
+      function parseTextToJSON(text) {
+        const lines = text.split("\n");
+        const data = {};
+        let currentSection = null;
+        let currentContent = [];
+        let inFAQ = false;
+        let currentFAQ = null;
+        let faqList = [];
+
+        const sectionMapping = {
+          "TAGLINES:": "taglines",
+          "META TITLE:": "meta_title",
+          "META DESCRIPTION:": "meta_description",
+          "BENEFITS:": "benefits",
+          "WHEN TO RECITE:": "when_to_recite",
+          "HOW TO PERFORM:": "how_to_perform",
+          "SUMMARY:": "summary",
+          "FREQUENTLY ASKED QUESTIONS:": "faqs",
+        };
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+
+          // Check for section headers
+          let foundSection = null;
+          for (const [header, section] of Object.entries(sectionMapping)) {
+            if (line === header || line.startsWith(header)) {
+              foundSection = section;
+              break;
+            }
+          }
+
+          if (foundSection) {
+            // Save previous section
+            if (currentSection && currentContent.length > 0) {
+              saveSectionData(data, currentSection, currentContent, faqList);
+            }
+
+            currentSection = foundSection;
+            currentContent = [];
+            inFAQ = foundSection === "faqs";
+            faqList = [];
+            currentFAQ = null;
+            continue;
+          }
+
+          // Handle FAQ format
+          if (inFAQ && currentSection === "faqs") {
+            if (line.match(/^Q\d+:/)) {
+              if (currentFAQ && currentFAQ.question) {
+                faqList.push(currentFAQ);
+              }
+              currentFAQ = {
+                question: line.replace(/^Q\d+:\s*/, ""),
+                answer: "",
+              };
+            } else if (line.match(/^A\d+:/) && currentFAQ) {
+              currentFAQ.answer = line.replace(/^A\d+:\s*/, "");
+            } else if (line && currentFAQ && !currentFAQ.answer) {
+              currentFAQ.question += " " + line;
+            } else if (line && currentFAQ && currentFAQ.answer) {
+              currentFAQ.answer += " " + line;
+            }
+          } else if (line) {
+            currentContent.push(line);
+          }
+        }
+
+        // Save last section
+        if (
+          currentSection &&
+          (currentContent.length > 0 || faqList.length > 0 || currentFAQ)
+        ) {
+          if (currentFAQ && currentFAQ.question) {
+            faqList.push(currentFAQ);
+          }
+          saveSectionData(data, currentSection, currentContent, faqList);
+        }
+
+        return data;
+      }
+
+      // Helper to save section data in proper format
+      function saveSectionData(data, section, content, faqList) {
+        switch (section) {
+          case "taglines":
+            // Taglines are comma-separated
+            if (content.length > 0) {
+              data.taglines = content[0]
+                .split(",")
+                .map((t) => t.trim())
+                .filter((t) => t);
+            }
+            break;
+          case "meta_title":
+            data.meta_title = content.join(" ");
+            break;
+          case "meta_description":
+            data.meta_description = content.join(" ");
+            break;
+          case "benefits":
+          case "when_to_recite":
+          case "how_to_perform":
+            // Find title, subtitle, and numbered content
+            let title = "";
+            let subtitle = "";
+            let items = [];
+
+            for (const line of content) {
+              if (line.match(/^\d+\./)) {
+                items.push(line.replace(/^\d+\.\s*/, ""));
+              } else if (!title) {
+                title = line;
+              } else if (!subtitle) {
+                subtitle = line;
+              }
+            }
+
+            data[section] = {
+              title: title,
+              subtitle: subtitle,
+              content: items,
+            };
+            break;
+          case "summary":
+            data.summary = content;
+            break;
+          case "faqs":
+            data.faqs = faqList;
+            break;
+        }
+      }
+
+      // Save text changes back to data
+      function saveTextChanges() {
+        if (!activeId) {
+          showToast("No item selected to save!");
+          return;
+        }
+
+        const textEditable = document.getElementById("textOutputEditable");
+        const newText = textEditable.value;
+
+        // Find the item in dataStore
+        const itemIndex = dataStore.findIndex((d) => d.id == activeId);
+        if (itemIndex === -1) {
+          showToast("Item not found in data store!");
+          return;
+        }
+
+        // Parse the text back to JSON
+        const newData = parseTextToJSON(newText);
+
+        // Update the dataStore
+        dataStore[itemIndex].data = newData;
+        dataStore[itemIndex].modified = true; // Mark as modified for smart update
+        currentData = newData;
+
+        // Update title if meta_title changed
+        if (newData.meta_title) {
+          const title = newData.meta_title;
+          dataStore[itemIndex].title =
+            title.substring(0, 40) + (title.length > 40 ? "..." : "");
+        }
+
+        // Update JSON input
+        document.getElementById("jsonInput").value = JSON.stringify(
+          newData,
+          null,
+          2
+        );
+
+        // Update parsed view
+        renderParsedContent(newData);
+
+        // Update text output (non-editable version)
+        document.getElementById("textOutput").textContent = newText;
+        originalText = newText;
+
+        // Save to IndexedDB
+        saveToStorage();
+
+        // Re-render sidebar
+        renderIdList();
+
+        // Update UI - Exit edit mode after save
+        hasUnsavedChanges = false;
+        textEditable.classList.remove("modified");
+
+        // Show saved status
+        const editStatus = document.getElementById("editStatus");
+        editStatus.textContent = "Saved!";
+        editStatus.className = "edit-status saved";
+
+        showToast("✅ Changes saved!");
+
+        // Hide editing status and exit edit mode after 1.5 seconds
+        setTimeout(() => {
+          // Exit edit mode
+          isEditMode = false;
+          document.getElementById("textOutput").style.display = "block";
+          textEditable.style.display = "none";
+          document.getElementById("saveChangesBtn").style.display = "none";
+          document.getElementById("editToggleBtn").classList.remove("active");
+          editStatus.style.display = "none"; // Hide the editing status
+        }, 1500);
+      }
+
       // Keyboard shortcuts
       document.addEventListener("keydown", function (e) {
         if (e.ctrlKey && e.key === "Enter") {
           parseJSON();
+        }
+        // Ctrl+S to save in edit mode
+        if (e.ctrlKey && e.key === "s" && isEditMode && hasUnsavedChanges) {
+          e.preventDefault();
+          saveTextChanges();
         }
       });
 
