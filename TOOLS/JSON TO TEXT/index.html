@@ -262,6 +262,41 @@
       .header-actions {
         display: flex;
         gap: 12px;
+        align-items: center;
+      }
+
+      /* File Name Display */
+      .file-name-display {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        color: var(--text-white);
+        font-size: 14px;
+        font-weight: 500;
+        max-width: 300px;
+        overflow: hidden;
+      }
+
+      .file-name-display.show {
+        display: flex;
+      }
+
+      .file-name-display svg {
+        width: 18px;
+        height: 18px;
+        color: var(--secondary);
+        flex-shrink: 0;
+      }
+
+      .file-name-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text-white);
       }
 
       /* Main Layout */
@@ -1311,6 +1346,17 @@
               />
             </svg>
           </button>
+          <div class="file-name-display" id="fileNameDisplay">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span class="file-name-text" id="fileNameText"></span>
+          </div>
           <div class="file-input-wrapper">
             <button class="btn btn-upload">
               <svg
@@ -1429,6 +1475,22 @@
                   />
                 </svg>
                 Paste Your JSON Here
+              </div>
+              <div class="header-buttons">
+                <button
+                  class="btn btn-secondary btn-icon"
+                  onclick="copyJSON()"
+                  title="Copy JSON"
+                >
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
             <textarea
@@ -1781,6 +1843,8 @@
       let columnHeaders = { id: "ID", content: "input" }; // Dynamic headers
       let deletedIds = new Set(); // Track deleted rows
       let selectedIds = new Set(); // Track selected rows
+      let currentFileName = null; // Track current loaded file name
+      let showFileName = false; // Toggle for showing file name in output
 
       // IndexedDB setup
       const DB_NAME = "JsonParserDB";
@@ -1830,6 +1894,8 @@
           store.put({ key: "selectedIds", value: Array.from(selectedIds) });
           store.put({ key: "deletedIds", value: Array.from(deletedIds) });
           store.put({ key: "columnHeaders", value: columnHeaders });
+          // Save file name
+          store.put({ key: "currentFileName", value: currentFileName });
 
           transaction.oncomplete = () => {
             console.log("Data saved to IndexedDB:", dataStore.length, "items");
@@ -1857,6 +1923,7 @@
             const selectedIdsRequest = store.get("selectedIds");
             const deletedIdsRequest = store.get("deletedIds");
             const columnHeadersRequest = store.get("columnHeaders");
+            const fileNameRequest = store.get("currentFileName");
 
             transaction.oncomplete = () => {
               const savedData = dataRequest.result;
@@ -1864,6 +1931,7 @@
               const savedSelectedIds = selectedIdsRequest.result;
               const savedDeletedIds = deletedIdsRequest.result;
               const savedColumnHeaders = columnHeadersRequest.result;
+              const savedFileName = fileNameRequest.result;
 
               console.log(
                 "Loading from IndexedDB, found data:",
@@ -1884,6 +1952,15 @@
                 }
                 if (savedColumnHeaders && savedColumnHeaders.value) {
                   columnHeaders = savedColumnHeaders.value;
+                }
+                // Restore file name
+                if (savedFileName && savedFileName.value) {
+                  currentFileName = savedFileName.value;
+                  document.getElementById("fileNameText").textContent =
+                    currentFileName;
+                  document
+                    .getElementById("fileNameDisplay")
+                    .classList.add("show");
                 }
 
                 renderIdList();
@@ -2622,6 +2699,15 @@
         copyToClipboard(text, "Plain text copied!");
       }
 
+      function copyJSON() {
+        const text = document.getElementById("jsonInput").value;
+        if (!text.trim()) {
+          showToast("No JSON to copy!");
+          return;
+        }
+        copyToClipboard(text, "JSON copied!");
+      }
+
       function copyToClipboard(text, message) {
         navigator.clipboard
           .writeText(text)
@@ -2658,14 +2744,21 @@
         const toast = document.getElementById("copyToast");
         const toastText = document.getElementById("copyToastText");
 
+        if (!toast || !toastText) {
+          console.error("Toast elements not found");
+          return;
+        }
+
         toastText.textContent = message || "Copied!";
         toast.classList.add("show");
 
         // Reset SVG animation
         const svg = toast.querySelector("svg path");
-        svg.style.animation = "none";
-        svg.offsetHeight; // Trigger reflow
-        svg.style.animation = "";
+        if (svg) {
+          svg.style.animation = "none";
+          svg.offsetHeight; // Trigger reflow
+          svg.style.animation = "";
+        }
 
         setTimeout(() => {
           toast.classList.remove("show");
@@ -2720,6 +2813,13 @@
         renderIdList();
         document.getElementById("errorMsg").classList.remove("show");
         document.getElementById("successMsg").classList.remove("show");
+
+        // Hide file name display
+        document.getElementById("fileNameDisplay").classList.remove("show");
+        document.getElementById("fileNameText").textContent = "";
+
+        // Reset file input
+        document.getElementById("excelFileInput").value = "";
       }
 
       // Escape HTML
@@ -2734,6 +2834,13 @@
       function handleExcelUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
+
+        // Store the file name
+        currentFileName = file.name;
+
+        // Display file name in header
+        document.getElementById("fileNameText").textContent = file.name;
+        document.getElementById("fileNameDisplay").classList.add("show");
 
         const loadingOverlay = document.getElementById("loadingOverlay");
         const loadingProgress = document.getElementById("loadingProgress");
