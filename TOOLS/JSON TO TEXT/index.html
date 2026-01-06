@@ -1072,6 +1072,21 @@
         color: var(--accent);
       }
 
+      .edit-status.syncing {
+        background: var(--primary-light);
+        color: var(--primary);
+        animation: pulse 0.5s ease-in-out infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          opacity: 0.7;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
       .edit-status.saved {
         background: var(--secondary-light);
         color: var(--secondary);
@@ -3163,14 +3178,55 @@
         }
       }
 
-      // Track text edits
+      // Debounce timer for live updates
+      let liveUpdateTimer = null;
+
+      // Track text edits and update JSON + Parsed View in real-time
       function onTextEdit() {
         const textEditable = document.getElementById("textOutputEditable");
         const saveBtn = document.getElementById("saveChangesBtn");
+        const editStatus = document.getElementById("editStatus");
 
         hasUnsavedChanges = true;
         saveBtn.disabled = false;
         textEditable.classList.add("modified");
+
+        // Show syncing indicator
+        editStatus.textContent = "Syncing...";
+        editStatus.className = "edit-status syncing";
+
+        // Debounce the live update to avoid too many updates while typing fast
+        clearTimeout(liveUpdateTimer);
+        liveUpdateTimer = setTimeout(() => {
+          updateJsonAndParsedViewFromPlainText();
+          // Show editing status after sync
+          editStatus.textContent = "Editing...";
+          editStatus.className = "edit-status editing";
+        }, 300); // 300ms delay for smoother performance
+      }
+
+      // Update JSON Input and Parsed View from Plain Text in real-time
+      function updateJsonAndParsedViewFromPlainText() {
+        if (!activeId) return;
+
+        const textEditable = document.getElementById("textOutputEditable");
+        const newText = textEditable.value;
+
+        // Parse the text back to JSON
+        const newData = parseTextToJSON(newText);
+
+        // Update JSON input textarea (live update)
+        document.getElementById("jsonInput").value = JSON.stringify(
+          newData,
+          null,
+          2
+        );
+
+        // Update parsed view (live update)
+        renderParsedContent(newData);
+
+        // Update currentData for consistency
+        currentData = newData;
       }
 
       // Parse plain text back to JSON structure
