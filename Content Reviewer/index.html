@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Reviewer</title>
+
+    <!-- SheetJS with Style Support (xlsx-js-style) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Dark Theme (Default) */
+        --primary: #8340ff;
+        --primary-hover: #8340ff;
+        --primary-glow: rgba(139, 92, 246, 0.25);
+        --bg-body: #0c0f1a;
+        --bg-panel: #151929;
+        --bg-panel-hover: #1c2035;
+        --bg-input: #0a0d14;
+        --border: #2a2f45;
+        --border-hover: #3d4360;
+        --text-main: #f1f5f9;
+        --text-muted: #8892b0;
+        --scroll-thumb: #3d4360;
+
+        /* Status Colors */
+        --status-green: #22c55e;
+        --status-red: #ef4444;
+        --status-yellow: #eab308;
+        --status-selected: #3b82f6;
+
+        /* Soft Backgrounds for Textarea Status */
+        --bg-green-soft: rgba(34, 197, 94, 0.12);
+        --bg-red-soft: rgba(239, 68, 68, 0.12);
+        --bg-yellow-soft: rgba(234, 179, 8, 0.12);
+
+        /* Shadows */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Light Theme Variables */
+      [data-theme="light"] {
+        --primary: #8340ff;
+        --primary-hover: #8340ff;
+        --primary-glow: rgba(124, 58, 237, 0.15);
+        --bg-body: #f8fafc;
+        --bg-panel: #ffffff;
+        --bg-panel-hover: #f1f5f9;
+        --bg-input: #ffffff;
+        --border: #e2e8f0;
+        --border-hover: #cbd5e1;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --scroll-thumb: #cbd5e1;
+
+        --bg-green-soft: rgba(34, 197, 94, 0.1);
+        --bg-red-soft: rgba(239, 68, 68, 0.1);
+        --bg-yellow-soft: rgba(234, 179, 8, 0.1);
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+        outline: none;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        height: 100vh;
+        overflow: hidden;
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      /* --- Layout --- */
+      .app-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        grid-template-rows: 64px 1fr;
+        height: 100%;
+      }
+
+      /* --- Header --- */
+      .header {
+        grid-column: 1 / -1;
+        background: var(--bg-panel);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        z-index: 10;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .logo {
+        font-weight: 700;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-main);
+        letter-spacing: -0.02em;
+      }
+
+      .logo svg {
+        color: var(--primary);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg-panel);
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--bg-panel-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-hover) 100%
+        );
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 14px var(--primary-glow);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-hover) 0%,
+          var(--primary) 100%
+        );
+        color: white;
+        box-shadow: 0 6px 20px var(--primary-glow);
+      }
+
+      /* --- Sidebar --- */
+      .sidebar {
+        background: var(--bg-panel);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .sidebar-controls {
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .manual-range {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .input-sm {
+        width: 100%;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        padding: 8px 10px;
+        color: var(--text-main);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+
+      .input-sm:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+      }
+
+      .search-box input {
+        width: 100%;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        color: var(--text-main);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+      }
+
+      .search-box input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-glow);
+      }
+
+      .search-box input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+      }
+
+      .id-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+      }
+
+      .id-item {
+        padding: 12px 16px;
+        margin-bottom: 6px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: transparent;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
+        position: relative;
+      }
+
+      .id-item:hover {
+        background: var(--bg-panel-hover);
+        border-color: var(--border);
+      }
+
+      .id-item.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-hover) 100%
+        );
+        color: white;
+        box-shadow: 0 4px 16px var(--primary-glow);
+        border-color: transparent;
+      }
+
+      .id-item.deleted {
+        text-decoration: line-through;
+        opacity: 0.4;
+      }
+
+      .id-item.selected {
+        border-left: 3px solid var(--status-selected);
+        background: rgba(59, 130, 246, 0.08);
+      }
+
+      .id-item.selected:hover {
+        background: rgba(59, 130, 246, 0.12);
+      }
+
+      /* --- Main Content --- */
+      .main {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        background: var(--bg-body);
+      }
+
+      /* Column Nav */
+      .col-nav {
+        display: flex;
+        gap: 10px;
+        padding-bottom: 18px;
+        overflow-x: auto;
+        flex-shrink: 0;
+      }
+
+      .col-btn {
+        min-width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+
+      .col-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .col-btn.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-hover) 100%
+        );
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 16px var(--primary-glow);
+      }
+
+      .col-has-status::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid var(--bg-body);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .dot-green::after {
+        background: var(--status-green);
+      }
+      .dot-red::after {
+        background: var(--status-red);
+      }
+      .dot-yellow::after {
+        background: var(--status-yellow);
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        gap: 4px;
+        background: var(--bg-panel);
+        padding: 5px;
+        border-radius: 12px;
+        width: fit-content;
+        margin-bottom: 18px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .tab-btn {
+        padding: 8px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        border: none;
+        background: transparent;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .tab-btn:hover:not(.active) {
+        color: var(--text-main);
+        background: var(--bg-panel-hover);
+      }
+
+      .tab-btn.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-hover) 100%
+        );
+        color: white;
+        box-shadow: 0 2px 8px var(--primary-glow);
+      }
+
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-panel);
+        padding: 14px 20px;
+        border-radius: 14px 14px 0 0;
+        border: 1px solid var(--border);
+        border-bottom: none;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .toolbar-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .color-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      .color-btn:hover {
+        transform: scale(1.2);
+      }
+
+      .color-btn.active {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 3px var(--text-main), 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Content Area */
+      .content-area {
+        flex: 1;
+        position: relative;
+        border: 1px solid var(--border);
+        border-radius: 0 0 14px 14px;
+        background: var(--bg-input);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+      }
+
+      .bg-green {
+        background-color: var(--bg-green-soft) !important;
+        border-color: var(--status-green) !important;
+      }
+      .bg-red {
+        background-color: var(--bg-red-soft) !important;
+        border-color: var(--status-red) !important;
+      }
+      .bg-yellow {
+        background-color: var(--bg-yellow-soft) !important;
+        border-color: var(--status-yellow) !important;
+      }
+
+      .tab-pane {
+        display: none;
+        height: 100%;
+        flex-direction: column;
+      }
+      .tab-pane.active {
+        display: flex;
+      }
+
+      textarea {
+        flex: 1;
+        width: 100%;
+        padding: 24px;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        font-family: "JetBrains Mono", monospace;
+        line-height: 1.7;
+        resize: none;
+        font-size: 0.9rem;
+      }
+
+      textarea::placeholder {
+        color: var(--text-muted);
+        opacity: 0.5;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--scroll-thumb);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--border-hover);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        backdrop-filter: blur(8px);
+      }
+
+      /* Parsed View */
+      .parsed-content {
+        padding: 24px;
+        overflow-y: auto;
+        color: var(--text-main);
+      }
+
+      .p-card {
+        margin-bottom: 24px;
+        padding: 16px 20px;
+        background: var(--bg-panel);
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .p-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        color: var(--primary);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+      }
+
+      .p-body {
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* Toast Notification */
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--primary-hover) 100%
+        );
+        color: white;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 8px 32px var(--primary-glow);
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .toast svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* File Badge */
+      .file-badge {
+        background: var(--bg-input);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Status Label */
+      .status-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-right: 8px;
+      }
+
+      /* Range Label */
+      .range-label {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 40px 20px;
+        font-size: 0.9rem;
+      }
+
+      .empty-state svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <svg
+            width="26"
+            height="26"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+          </svg>
+          Content Reviewer
+        </div>
+        <div class="header-actions">
+          <span id="fileName" class="file-badge" style="display: none"></span>
+          <input
+            type="file"
+            id="fileInput"
+            hidden
+            accept=".xlsx,.xls"
+            onchange="handleFileUpload(event)"
+          />
+
+          <button
+            class="btn btn-primary"
+            onclick="document.getElementById('fileInput').click()"
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"
+              />
+            </svg>
+            Load Excel
+          </button>
+          <button class="btn" onclick="downloadExcel()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"
+              />
+            </svg>
+            Download
+          </button>
+          <button class="btn" onclick="resetAll()">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+              />
+            </svg>
+            Clear
+          </button>
+
+          <!-- Theme Toggle -->
+          <button
+            class="btn"
+            onclick="toggleTheme()"
+            title="Toggle Theme"
+            style="padding: 10px"
+          >
+            <svg
+              id="themeIcon"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-controls">
+          <div class="search-box">
+            <input
+              type="text"
+              id="idSearch"
+              placeholder="Search by ID..."
+              onkeyup="handleSearch(event)"
+            />
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 4px;
+            "
+          >
+            <span class="range-label">Row Range</span>
+          </div>
+          <div class="manual-range">
+            <input
+              type="number"
+              id="startRow"
+              class="input-sm"
+              value="1"
+              placeholder="Start"
+            />
+            <span style="color: var(--text-muted); font-weight: 500">→</span>
+            <input
+              type="number"
+              id="endRow"
+              class="input-sm"
+              value="100"
+              placeholder="End"
+            />
+            <button
+              class="btn btn-primary"
+              style="padding: 8px 14px; min-width: 50px"
+              onclick="loadSidebarRange()"
+            >
+              Go
+            </button>
+          </div>
+        </div>
+        <div class="id-list" id="idList">
+          <div class="empty-state">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+              />
+            </svg>
+            <div>Load an Excel file to start reviewing</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Column Buttons -->
+        <div class="col-nav" id="columnNav"></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('text')">
+            Plain Text
+          </button>
+          <button class="tab-btn" onclick="switchTab('json')">
+            JSON Input
+          </button>
+          <button class="tab-btn" onclick="switchTab('parsed')">
+            Parsed View
+          </button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar" id="mainToolbar">
+          <div class="toolbar-group">
+            <span class="status-label">Status:</span>
+            <div
+              class="color-btn"
+              style="background: var(--status-green)"
+              onclick="setStatus('green')"
+              title="Approve"
+            ></div>
+            <div
+              class="color-btn"
+              style="background: var(--status-yellow)"
+              onclick="setStatus('yellow')"
+              title="Review"
+            ></div>
+            <div
+              class="color-btn"
+              style="background: var(--status-red)"
+              onclick="setStatus('red')"
+              title="Reject"
+            ></div>
+            <button
+              class="btn"
+              style="padding: 6px 12px; font-size: 0.8rem; margin-left: 8px"
+              onclick="setStatus(null)"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="toolbar-group">
+            <button
+              class="btn"
+              onclick="toggleSelectRow()"
+              title="Mark Row Selected"
+            >
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+              Select
+            </button>
+            <button
+              class="btn"
+              onclick="toggleDeleteRow()"
+              title="Mark Row Deleted"
+            >
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Delete
+            </button>
+            <button class="btn" onclick="copyCurrentContent()">
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor/Viewer -->
+        <div class="content-area" id="contentWrapper">
+          <!-- Tab: Plain Text -->
+          <div id="tab-text" class="tab-pane active">
+            <textarea
+              id="textEditor"
+              oninput="handleEdit(this.value)"
+              spellcheck="false"
+            ></textarea>
+          </div>
+          <!-- Tab: JSON -->
+          <div id="tab-json" class="tab-pane">
+            <textarea
+              id="jsonViewer"
+              readonly
+              style="color: var(--primary); font-size: 0.85rem"
+            ></textarea>
+          </div>
+          <!-- Tab: Parsed -->
+          <div id="tab-parsed" class="tab-pane">
+            <div id="parsedContent" class="parsed-content"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay hidden">
+      <div
+        style="
+          border: 4px solid rgba(255, 255, 255, 0.2);
+          border-top: 4px solid var(--primary);
+          border-radius: 50%;
+          width: 48px;
+          height: 48px;
+          animation: spin 0.8s linear infinite;
+        "
+      ></div>
+      <div style="margin-top: 18px; font-weight: 600; font-size: 1rem">
+        Processing File...
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+      <span id="toastMessage">Copied to clipboard!</span>
+    </div>
+
+    <style>
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+
+    <script>
+      // --- INDEXEDDB STORAGE (Handles large files, no 5MB limit) ---
+      const DB_NAME = "ContentReviewerDB";
+      const DB_VERSION = 1;
+      const STORE_NAME = "appData";
+      let db = null;
+
+      // Initialize IndexedDB
+      const initDB = () => {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+          request.onerror = (e) => {
+            console.error("IndexedDB error:", e);
+            resolve(null); // Continue without DB
+          };
+
+          request.onsuccess = (e) => {
+            db = e.target.result;
+            console.log("IndexedDB ready");
+            resolve(db);
+          };
+
+          request.onupgradeneeded = (e) => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains(STORE_NAME)) {
+              database.createObjectStore(STORE_NAME, { keyPath: "id" });
+            }
+          };
+        });
+      };
+
+      const saveData = () => {
+        if (rawData.length === 0 || !db) return;
+
+        try {
+          const transaction = db.transaction([STORE_NAME], "readwrite");
+          const store = transaction.objectStore(STORE_NAME);
+
+          const dataToSave = {
+            id: "state",
+            rawData: rawData,
+            idColKey: idColKey,
+            contentCols: contentCols,
+            cellEdits: cellEdits,
+            cellStatus: cellStatus,
+            rowFlags: rowFlags,
+            fileName: document.getElementById("fileName").innerText || "",
+            startRow: document.getElementById("startRow").value,
+            endRow: document.getElementById("endRow").value,
+            activeId: activeId,
+            activeColIdx: activeColIdx,
+            savedAt: new Date().toISOString(),
+          };
+
+          store.put(dataToSave);
+
+          transaction.oncomplete = () => {
+            console.log("Saved to IndexedDB:", dataToSave.savedAt);
+          };
+
+          transaction.onerror = (e) => {
+            console.error("Save Error:", e);
+          };
+        } catch (e) {
+          console.error("Save Exception:", e);
+        }
+      };
+
+      const loadData = () => {
+        return new Promise((resolve) => {
+          if (!db) {
+            resolve(null);
+            return;
+          }
+
+          try {
+            const transaction = db.transaction([STORE_NAME], "readonly");
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.get("state");
+
+            request.onsuccess = () => {
+              if (request.result) {
+                console.log("Loaded from IndexedDB:", request.result.savedAt);
+                resolve(request.result);
+              } else {
+                resolve(null);
+              }
+            };
+
+            request.onerror = () => resolve(null);
+          } catch (e) {
+            console.error("Load Exception:", e);
+            resolve(null);
+          }
+        });
+      };
+
+      const clearStoredData = () => {
+        if (!db) return;
+        try {
+          const transaction = db.transaction([STORE_NAME], "readwrite");
+          const store = transaction.objectStore(STORE_NAME);
+          store.clear();
+          console.log("IndexedDB cleared");
+        } catch (e) {
+          console.error("Clear Error:", e);
+        }
+      };
+
+      // --- TOAST NOTIFICATION ---
+      function showToast(message = "Copied to clipboard!") {
+        const toast = document.getElementById("toast");
+        const toastMessage = document.getElementById("toastMessage");
+        toastMessage.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2000);
+      }
+
+      // --- STATE ---
+      let rawData = [];
+      let idColKey = "";
+      let contentCols = [];
+
+      let activeId = null;
+      let activeColIdx = 0;
+
+      let cellEdits = {};
+      let cellStatus = {};
+      let rowFlags = {};
+
+      // --- INITIAL LOAD & THEME ---
+      window.onload = async () => {
+        // Theme Load
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        if (savedTheme === "light") toggleTheme(false);
+
+        // Initialize IndexedDB first
+        await initDB();
+
+        // Load saved data
+        const savedState = await loadData();
+        console.log("Loaded state:", savedState);
+
+        if (savedState && savedState.rawData && savedState.rawData.length > 0) {
+          console.log(
+            "Restoring saved data with",
+            savedState.rawData.length,
+            "rows"
+          );
+
+          rawData = savedState.rawData;
+          idColKey = savedState.idColKey;
+          contentCols = savedState.contentCols;
+          cellEdits = savedState.cellEdits || {};
+          cellStatus = savedState.cellStatus || {};
+          rowFlags = savedState.rowFlags || {};
+          activeColIdx = savedState.activeColIdx || 0;
+
+          const fileNameEl = document.getElementById("fileName");
+          fileNameEl.innerText = savedState.fileName || "";
+          if (savedState.fileName) {
+            fileNameEl.style.display = "block";
+          }
+
+          // Restore range values
+          document.getElementById("startRow").value = savedState.startRow || 1;
+          document.getElementById("endRow").value =
+            savedState.endRow || Math.min(100, rawData.length);
+
+          loadSidebarRange();
+
+          // Restore active ID
+          if (
+            savedState.activeId &&
+            rawData.find((r) => r[idColKey] == savedState.activeId)
+          ) {
+            selectId(savedState.activeId);
+          } else if (rawData.length > 0) {
+            selectId(rawData[0][idColKey]);
+          }
+
+          showToast("Session restored!");
+        }
+      };
+
+      // Save data before page unload
+      window.onbeforeunload = () => {
+        if (rawData.length > 0) {
+          saveData();
+        }
+      };
+
+      // Also save on visibility change (tab switch)
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden" && rawData.length > 0) {
+          saveData();
+        }
+      });
+
+      function toggleTheme(save = true) {
+        const body = document.body;
+        const current = body.getAttribute("data-theme");
+        const isLight = current === "light"; // If currently light, switch to dark
+
+        // If save is false, we are initializing, so we invert logic slightly or just set based on loaded value
+        // Simplified:
+        const newTheme = (save ? !isLight : isLight) ? "light" : "dark"; // Toggle if save, else keep
+
+        // Actually, let's just check the attribute.
+        // If this function is called via button: toggle.
+        // If called via init: set specific.
+
+        let targetTheme = "dark";
+        if (save) {
+          targetTheme =
+            body.getAttribute("data-theme") === "light" ? "dark" : "light";
+        } else {
+          targetTheme = "light"; // Force light for init if saved
+        }
+
+        body.setAttribute("data-theme", targetTheme);
+        if (save) localStorage.setItem("theme", targetTheme);
+
+        // Update Icon
+        const svg = document.getElementById("themeIcon");
+        if (targetTheme === "dark") {
+          svg.innerHTML =
+            '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+          svg.setAttribute("fill", "currentColor");
+          svg.setAttribute("stroke", "none");
+        } else {
+          svg.innerHTML =
+            '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+          svg.setAttribute("fill", "none");
+          svg.setAttribute("stroke", "currentColor");
+        }
+      }
+
+      // --- FILE HANDLING ---
+      function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        document.getElementById("loading").classList.remove("hidden");
+        document.getElementById("fileName").innerText = file.name;
+        document.getElementById("fileName").style.display = "block";
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const wb = XLSX.read(evt.target.result, { type: "array" });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(ws, { defval: "" }); // keep empty strings
+
+            if (json.length === 0) throw new Error("Empty File");
+
+            rawData = json;
+            const keys = Object.keys(json[0]);
+            idColKey = keys.find((k) => k.toLowerCase() === "id") || keys[0];
+            contentCols = keys.filter((k) => k !== idColKey);
+
+            activeColIdx = 0;
+            activeId = null;
+            cellEdits = {};
+            cellStatus = {};
+            rowFlags = {};
+
+            document.getElementById("startRow").value = 1;
+            document.getElementById("endRow").value = Math.min(
+              100,
+              rawData.length
+            );
+
+            loadSidebarRange();
+
+            if (rawData.length > 0) {
+              selectId(rawData[0][idColKey]);
+            }
+
+            // Save after selecting ID so activeId is set
+            saveData();
+            console.log("File data saved to localStorage");
+
+            showToast("✓ File loaded & saved!");
+          } catch (err) {
+            alert("Error: " + err.message);
+          } finally {
+            document.getElementById("loading").classList.add("hidden");
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      // --- SIDEBAR ---
+      function loadSidebarRange() {
+        if (rawData.length === 0) return;
+
+        const list = document.getElementById("idList");
+        list.innerHTML = "";
+
+        let start = parseInt(document.getElementById("startRow").value) - 1;
+        let end = parseInt(document.getElementById("endRow").value);
+        if (isNaN(start) || start < 0) start = 0;
+        if (isNaN(end) || end > rawData.length) end = rawData.length;
+        if (end < start) end = start + 1;
+
+        const rangeData = rawData.slice(start, end);
+
+        if (rangeData.length === 0) {
+          list.innerHTML = `<div class="empty-state"><div>No items in this range</div></div>`;
+          return;
+        }
+
+        rangeData.forEach((row) => {
+          const id = row[idColKey];
+          const div = document.createElement("div");
+          div.className = `id-item`;
+          div.id = `row-${id}`;
+
+          if (rowFlags[id]?.deleted) div.classList.add("deleted");
+          if (rowFlags[id]?.selected) div.classList.add("selected");
+          if (id === activeId) div.classList.add("active");
+
+          div.innerHTML = `<span>${id}</span>`;
+          div.onclick = () => selectId(id);
+          list.appendChild(div);
+        });
+
+        saveData(); // Save range
+      }
+
+      function handleSearch(e) {
+        const val = e.target.value.toLowerCase();
+        if (e.key === "Enter" || val.length > 1) {
+          const foundIdx = rawData.findIndex(
+            (r) => String(r[idColKey]).toLowerCase() == val
+          );
+          if (foundIdx !== -1) {
+            const id = rawData[foundIdx][idColKey];
+            document.getElementById("startRow").value = foundIdx + 1;
+            document.getElementById("endRow").value = foundIdx + 50;
+            loadSidebarRange();
+            selectId(id);
+          }
+        }
+      }
+
+      function selectId(id) {
+        if (activeId) {
+          const prev = document.getElementById(`row-${activeId}`);
+          if (prev) prev.classList.remove("active");
+        }
+        activeId = id;
+        const curr = document.getElementById(`row-${id}`);
+        if (curr) {
+          curr.classList.add("active");
+          curr.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        // Logic for default visible column: Find first non-empty column
+        const row = rawData.find((r) => r[idColKey] == activeId);
+
+        // Only change activeColIdx if the CURRENT one is empty for this new ID?
+        // User requirement: "If col 2 is empty, it shouldn't show".
+        // Let's reset column nav rendering. We need to find a valid column to show if current active is hidden.
+
+        renderColumnNav(); // This will determine which columns are visible
+
+        // After rendering columns, check if activeColIdx is still valid (visible).
+        // If the button for activeColIdx doesn't exist in DOM (or logic), switch to first available.
+        // Implementation detail: check data.
+
+        const currentKey = `${activeId}_${activeColIdx}`;
+        const hasData =
+          (row[contentCols[activeColIdx]] !== undefined &&
+            row[contentCols[activeColIdx]] !== "") ||
+          cellEdits[currentKey];
+
+        if (!hasData) {
+          // Find first available column
+          for (let i = 0; i < contentCols.length; i++) {
+            const key = `${activeId}_${i}`;
+            if (
+              (row[contentCols[i]] !== undefined &&
+                row[contentCols[i]] !== "") ||
+              cellEdits[key]
+            ) {
+              activeColIdx = i;
+              break;
+            }
+          }
+          renderColumnNav(); // Re-render with new active
+        }
+
+        renderContent();
+        saveData(); // Save active state
+      }
+
+      // --- DYNAMIC COLUMN NAV (Fix #3) ---
+      function renderColumnNav() {
+        const nav = document.getElementById("columnNav");
+        nav.innerHTML = "";
+
+        if (!activeId) return;
+
+        const row = rawData.find((r) => r[idColKey] == activeId);
+
+        contentCols.forEach((col, idx) => {
+          // Check if column has data OR has been edited
+          const val = row[col];
+          const key = `${activeId}_${idx}`;
+          const hasData =
+            (val !== undefined && val !== "") ||
+            (cellEdits[key] !== undefined && cellEdits[key] !== "");
+
+          if (hasData) {
+            const btn = document.createElement("button");
+            btn.className = `col-btn ${idx === activeColIdx ? "active" : ""}`;
+            btn.textContent = idx + 1;
+            btn.title = col;
+
+            // Status Dot
+            const status = cellStatus[key];
+            if (status) btn.classList.add("col-has-status", `dot-${status}`);
+
+            btn.onclick = () => {
+              activeColIdx = idx;
+              renderColumnNav();
+              renderContent();
+              saveData(); // Save column selection
+            };
+            nav.appendChild(btn);
+          }
+        });
+      }
+
+      // --- RENDER CONTENT ---
+      function renderContent() {
+        if (!activeId) return;
+
+        const row = rawData.find((r) => r[idColKey] == activeId);
+        const colKey = contentCols[activeColIdx];
+        const key = `${activeId}_${activeColIdx}`;
+
+        let rawContent =
+          cellEdits[key] !== undefined ? cellEdits[key] : row[colKey];
+
+        let jsonObject = null;
+        let isJson = false;
+
+        // Improved JSON parsing - handle any valid JSON
+        try {
+          if (typeof rawContent === "object" && rawContent !== null) {
+            jsonObject = rawContent;
+            isJson = true;
+          } else if (typeof rawContent === "string" && rawContent.trim()) {
+            const trimmed = rawContent.trim();
+            // Check if it looks like JSON (starts with { or [)
+            if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+              // Try to parse it
+              jsonObject = JSON.parse(trimmed);
+              isJson = true;
+            }
+          }
+        } catch (e) {
+          // Not valid JSON, that's fine
+          isJson = false;
+          jsonObject = null;
+        }
+
+        const textEditor = document.getElementById("textEditor");
+
+        if (cellEdits[key] !== undefined) {
+          textEditor.value =
+            typeof rawContent === "object"
+              ? JSON.stringify(rawContent, null, 2)
+              : rawContent;
+        } else {
+          if (isJson) {
+            textEditor.value = formatJSONtoPlainText(jsonObject);
+          } else {
+            textEditor.value = String(rawContent || "");
+          }
+        }
+
+        document.getElementById("jsonViewer").value = isJson
+          ? JSON.stringify(jsonObject, null, 2)
+          : "Not valid JSON data";
+
+        const parsedContainer = document.getElementById("parsedContent");
+        if (isJson) {
+          renderParsedHTML(jsonObject, parsedContainer);
+        } else {
+          parsedContainer.innerHTML = `<div class="empty-state" style="padding-top: 60px;">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
+            </svg>
+            <div>Content is not structured JSON</div>
+          </div>`;
+        }
+
+        const wrapper = document.getElementById("contentWrapper");
+        wrapper.className = "content-area";
+        const status = cellStatus[key];
+        if (status) wrapper.classList.add(`bg-${status}`);
+
+        updateColorButtons(status);
+      }
+
+      // --- UNIVERSAL JSON FORMATTER ---
+      function formatJSONtoPlainText(data, indent = 0) {
+        if (!data) return "";
+
+        const spaces = "  ".repeat(indent);
+        let parts = [];
+
+        // Helper to clean HTML tags
+        const clean = (txt) => {
+          if (txt === null || txt === undefined) return "";
+          return String(txt)
+            .replace(/<[^>]*>/g, "")
+            .trim();
+        };
+
+        // Handle arrays
+        if (Array.isArray(data)) {
+          data.forEach((item, i) => {
+            if (typeof item === "object" && item !== null) {
+              parts.push(formatJSONtoPlainText(item, indent));
+            } else {
+              parts.push(`${spaces}${i + 1}. ${clean(item)}`);
+            }
+          });
+          return parts.join("\n");
+        }
+
+        // Handle objects
+        if (typeof data === "object") {
+          // Known structured fields (special handling)
+          const knownFields = [
+            "taglines",
+            "meta_title",
+            "meta_description",
+            "benefits",
+            "when_to_recite",
+            "how_to_perform",
+            "summary",
+            "faqs",
+            "title",
+            "subtitle",
+            "content",
+            "question",
+            "answer",
+            "description",
+            "name",
+            "text",
+            "value",
+            "label",
+            "heading",
+          ];
+
+          Object.keys(data).forEach((key) => {
+            const val = data[key];
+            const label = key.toUpperCase().replace(/_/g, " ");
+
+            if (val === null || val === undefined || val === "") return;
+
+            if (
+              typeof val === "string" ||
+              typeof val === "number" ||
+              typeof val === "boolean"
+            ) {
+              parts.push(`${spaces}${label}:`);
+              parts.push(`${spaces}${clean(val)}`);
+              parts.push("");
+            } else if (Array.isArray(val)) {
+              parts.push(`${spaces}${label}:`);
+              val.forEach((item, i) => {
+                if (typeof item === "object" && item !== null) {
+                  // Handle objects in array (like FAQs)
+                  const subParts = [];
+                  Object.keys(item).forEach((subKey) => {
+                    if (item[subKey]) {
+                      const subLabel =
+                        subKey.charAt(0).toUpperCase() + subKey.slice(1);
+                      subParts.push(`${subLabel}: ${clean(item[subKey])}`);
+                    }
+                  });
+                  parts.push(`${spaces}  ${i + 1}. ${subParts.join(" | ")}`);
+                } else {
+                  parts.push(`${spaces}  ${i + 1}. ${clean(item)}`);
+                }
+              });
+              parts.push("");
+            } else if (typeof val === "object") {
+              parts.push(`${spaces}${label}:`);
+              // Recursively format nested objects
+              const nested = formatJSONtoPlainText(val, indent + 1);
+              if (nested) parts.push(nested);
+              parts.push("");
+            }
+          });
+        }
+
+        return parts.join("\n").trim();
+      }
+
+      function renderParsedHTML(data, container) {
+        let html = "";
+
+        const block = (label, content) => `
+            <div class="p-card">
+               <div class="p-label">${label}</div>
+               <div class="p-body">${content}</div>
+            </div>`;
+
+        const clean = (txt) => {
+          if (txt === null || txt === undefined) return "";
+          return String(txt).trim();
+        };
+
+        // Recursively render any JSON structure
+        function renderValue(value, label = "") {
+          if (value === null || value === undefined || value === "") return "";
+
+          if (
+            typeof value === "string" ||
+            typeof value === "number" ||
+            typeof value === "boolean"
+          ) {
+            return label
+              ? block(label, clean(value))
+              : `<p>${clean(value)}</p>`;
+          }
+
+          if (Array.isArray(value)) {
+            if (value.length === 0) return "";
+
+            // Check if array contains objects or primitives
+            if (typeof value[0] === "object" && value[0] !== null) {
+              let content = value
+                .map((item, i) => {
+                  let itemHtml = "";
+                  Object.keys(item).forEach((key) => {
+                    if (item[key]) {
+                      const keyLabel =
+                        key.charAt(0).toUpperCase() +
+                        key.slice(1).replace(/_/g, " ");
+                      if (
+                        key === "title" ||
+                        key === "heading" ||
+                        key === "name"
+                      ) {
+                        itemHtml += `<strong>${clean(item[key])}</strong><br>`;
+                      } else if (key === "subtitle" || key === "description") {
+                        itemHtml += `<em style="color:var(--text-muted)">${clean(
+                          item[key]
+                        )}</em><br>`;
+                      } else if (Array.isArray(item[key])) {
+                        itemHtml += `<ul style="margin:5px 0; padding-left:20px;">${item[
+                          key
+                        ]
+                          .map((li) => `<li>${clean(li)}</li>`)
+                          .join("")}</ul>`;
+                      } else if (typeof item[key] === "object") {
+                        itemHtml += `<div style="margin-left: 10px;">${renderValue(
+                          item[key]
+                        )}</div>`;
+                      } else {
+                        itemHtml += `<div><strong>${keyLabel}:</strong> ${clean(
+                          item[key]
+                        )}</div>`;
+                      }
+                    }
+                  });
+                  return `<div style="margin-bottom: 12px; padding: 8px; background: var(--bg-body); border-radius: 8px;">${itemHtml}</div>`;
+                })
+                .join("");
+              return label ? block(label, content) : content;
+            } else {
+              // Array of primitives
+              let content = `<ul style="margin:5px 0; padding-left:20px;">${value
+                .map((item) => `<li>${clean(item)}</li>`)
+                .join("")}</ul>`;
+              return label ? block(label, content) : content;
+            }
+          }
+
+          if (typeof value === "object") {
+            let content = "";
+            Object.keys(value).forEach((key) => {
+              if (
+                value[key] !== null &&
+                value[key] !== undefined &&
+                value[key] !== ""
+              ) {
+                content += renderValue(value[key], key.replace(/_/g, " "));
+              }
+            });
+            return content;
+          }
+
+          return "";
+        }
+
+        // Render all top-level keys
+        if (typeof data === "object" && !Array.isArray(data)) {
+          Object.keys(data).forEach((key) => {
+            const label =
+              key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ");
+            html += renderValue(data[key], label);
+          });
+        } else {
+          html = renderValue(data);
+        }
+
+        container.innerHTML =
+          html ||
+          `<div class="empty-state"><div>No structured content to display</div></div>`;
+      }
+
+      // --- ACTIONS ---
+      function handleEdit(val) {
+        if (!activeId) return;
+        const key = `${activeId}_${activeColIdx}`;
+        cellEdits[key] = val;
+        saveData();
+      }
+
+      function setStatus(color) {
+        if (!activeId) return;
+        const key = `${activeId}_${activeColIdx}`;
+        if (cellStatus[key] === color) delete cellStatus[key];
+        else cellStatus[key] = color;
+
+        saveData();
+        renderContent();
+        renderColumnNav(); // Update dots
+      }
+
+      function updateColorButtons(status) {
+        document
+          .querySelectorAll(".color-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (status === "green")
+          document
+            .querySelector("[onclick=\"setStatus('green')\"]")
+            .classList.add("active");
+        if (status === "yellow")
+          document
+            .querySelector("[onclick=\"setStatus('yellow')\"]")
+            .classList.add("active");
+        if (status === "red")
+          document
+            .querySelector("[onclick=\"setStatus('red')\"]")
+            .classList.add("active");
+      }
+
+      function toggleSelectRow() {
+        if (!activeId) return;
+        if (!rowFlags[activeId]) rowFlags[activeId] = {};
+        rowFlags[activeId].selected = !rowFlags[activeId].selected;
+
+        const div = document.getElementById(`row-${activeId}`);
+        if (div) div.classList.toggle("selected");
+        saveData();
+      }
+
+      function toggleDeleteRow() {
+        if (!activeId) return;
+        if (!rowFlags[activeId]) rowFlags[activeId] = {};
+        rowFlags[activeId].deleted = !rowFlags[activeId].deleted;
+
+        const div = document.getElementById(`row-${activeId}`);
+        if (div) div.classList.toggle("deleted");
+        saveData();
+      }
+
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-pane")
+          .forEach((p) => p.classList.remove("active"));
+
+        event.target.classList.add("active");
+        document.getElementById(`tab-${tab}`).classList.add("active");
+      }
+
+      function copyCurrentContent() {
+        let contentToCopy = "";
+        if (document.getElementById("tab-text").classList.contains("active")) {
+          contentToCopy = document.getElementById("textEditor").value;
+        } else if (
+          document.getElementById("tab-json").classList.contains("active")
+        ) {
+          contentToCopy = document.getElementById("jsonViewer").value;
+        } else {
+          contentToCopy = document.getElementById("textEditor").value;
+        }
+
+        if (contentToCopy) {
+          navigator.clipboard
+            .writeText(contentToCopy)
+            .then(() => {
+              showToast("Copied to clipboard!");
+            })
+            .catch((err) => {
+              // Fallback for older browsers
+              const textarea = document.createElement("textarea");
+              textarea.value = contentToCopy;
+              document.body.appendChild(textarea);
+              textarea.select();
+              document.execCommand("copy");
+              document.body.removeChild(textarea);
+              showToast("Copied to clipboard!");
+            });
+        }
+      }
+
+      function resetAll() {
+        if (confirm("Clear all data and reset the application?")) {
+          // Clear localStorage
+          clearStoredData();
+
+          // Reset state
+          rawData = [];
+          idColKey = "";
+          contentCols = [];
+          activeId = null;
+          activeColIdx = 0;
+          cellEdits = {};
+          cellStatus = {};
+          rowFlags = {};
+
+          // Reset UI
+          document.getElementById("fileName").innerText = "";
+          document.getElementById("fileName").style.display = "none";
+          document.getElementById("startRow").value = 1;
+          document.getElementById("endRow").value = 100;
+          document.getElementById("idList").innerHTML = `
+            <div class="empty-state">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+              </svg>
+              <div>Load an Excel file to start reviewing</div>
+            </div>
+          `;
+          document.getElementById("columnNav").innerHTML = "";
+          document.getElementById("textEditor").value = "";
+          document.getElementById("jsonViewer").value = "";
+          document.getElementById("parsedContent").innerHTML = "";
+          document.getElementById("contentWrapper").className = "content-area";
+          document.getElementById("fileInput").value = "";
+
+          showToast("✓ Application reset");
+        }
+      }
+
+      // --- EXPORT WITH BACKGROUND COLORS (Fix #1) ---
+      function downloadExcel() {
+        if (rawData.length === 0) return;
+
+        const colorMap = {
+          green: "C6EFCE", // Excel standard Light Green
+          red: "FFC7CE", // Excel standard Light Red
+          yellow: "FFEB9C", // Excel standard Light Yellow
+        };
+
+        // We construct the sheet manually to apply styles
+        const ws = XLSX.utils.json_to_sheet([]);
+
+        // 1. Headers
+        const headers = [
+          idColKey,
+          ...contentCols,
+          "__ROW_STATUS",
+          "__ROW_SELECTED",
+        ];
+        XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A1" });
+
+        // 2. Data Rows
+        rawData.forEach((row, rIdx) => {
+          const id = row[idColKey];
+          let rowData = [id];
+
+          // Content Columns
+          contentCols.forEach((col, cIdx) => {
+            const key = `${id}_${cIdx}`;
+            let val = cellEdits[key] !== undefined ? cellEdits[key] : row[col];
+            rowData.push(val);
+          });
+
+          // Meta
+          rowData.push(rowFlags[id]?.deleted ? "DELETED" : "");
+          rowData.push(rowFlags[id]?.selected ? "YES" : "");
+
+          XLSX.utils.sheet_add_aoa(ws, [rowData], { origin: -1 }); // Append
+
+          // 3. Apply Styles
+          // Rows are 0-indexed in array, but 1-based in Sheet (Row 1 is header, Row 2 is data index 0)
+          const sheetRow = rIdx + 1; // +1 because headers take row 0 (A1)
+
+          contentCols.forEach((col, cIdx) => {
+            const key = `${id}_${cIdx}`;
+            const status = cellStatus[key];
+
+            if (status && colorMap[status]) {
+              // Column Index: 0 is ID. Content starts at 1.
+              const sheetCol = cIdx + 1;
+
+              const cellAddress = XLSX.utils.encode_cell({
+                c: sheetCol,
+                r: sheetRow,
+              });
+
+              if (!ws[cellAddress]) ws[cellAddress] = { t: "s", v: "" }; // Create if empty
+
+              if (!ws[cellAddress].s) ws[cellAddress].s = {};
+
+              ws[cellAddress].s.fill = {
+                fgColor: { rgb: colorMap[status] },
+              };
+            }
+          });
+        });
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Reviewed Data");
+        XLSX.writeFile(wb, "Review_Export.xlsx");
+      }
+    </script>
+  </body>
+</html>
