@@ -2126,12 +2126,47 @@
         }
 
         try {
-          currentData = JSON.parse(input);
+          // Try to parse as JSON first
+          let parsedData = JSON.parse(input);
+
+          // Handle double-encoded or multiple-encoded JSON
+          // Keep parsing if the result is a string that looks like JSON
+          let parseCount = 1;
+          while (typeof parsedData === "string" && parseCount < 10) {
+            try {
+              const temp = JSON.parse(parsedData);
+              parsedData = temp;
+              parseCount++;
+            } catch (e) {
+              // Not a JSON string, stop parsing
+              break;
+            }
+          }
+
+          // If after all parsing we still have a string, it might be plain text
+          if (typeof parsedData === "string") {
+            throw new Error("Result is still a string after parsing");
+          }
+
+          currentData = parsedData;
+
+          // Format the JSON nicely in the input field
+          document.getElementById("jsonInput").value = JSON.stringify(
+            currentData,
+            null,
+            2
+          );
+
           renderParsedContent(currentData);
           renderPlainText(currentData);
 
+          let successMessage = "JSON parsed successfully!";
+          if (parseCount > 1) {
+            successMessage = `JSON parsed successfully (${parseCount}x encoded)!`;
+          }
           successText.textContent =
-            'JSON parsed successfully! Switch to "Parsed View" or "Plain Text" to see results.';
+            successMessage +
+            ' Switch to "Parsed View" or "Plain Text" to see results.';
           successMsg.classList.add("show");
 
           // Auto-switch to parsed view
@@ -2139,9 +2174,205 @@
             document.querySelectorAll(".tab-btn")[1].click();
           }, 500);
         } catch (e) {
-          errorText.textContent = "Invalid JSON: " + e.message;
-          errorMsg.classList.add("show");
+          // If JSON parsing fails, try to parse as plain text
+          try {
+            currentData = parsePlainTextToJSON(input);
+
+            // Format the JSON nicely in the input field
+            document.getElementById("jsonInput").value = JSON.stringify(
+              currentData,
+              null,
+              2
+            );
+
+            renderParsedContent(currentData);
+            renderPlainText(currentData);
+
+            successText.textContent =
+              "Plain text parsed successfully! Converted to JSON format.";
+            successMsg.classList.add("show");
+
+            // Auto-switch to parsed view
+            setTimeout(() => {
+              document.querySelectorAll(".tab-btn")[1].click();
+            }, 500);
+          } catch (plainTextError) {
+            errorText.textContent =
+              "Invalid input format. Expected JSON or structured plain text. JSON Error: " +
+              e.message;
+            errorMsg.classList.add("show");
+          }
         }
+      }
+
+      // Parse plain text content to JSON structure
+      function parsePlainTextToJSON(text) {
+        const lines = text
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line);
+        const result = {};
+        let currentSection = null;
+        let currentSubsection = null;
+        let contentArray = [];
+        let faqArray = [];
+        let currentFaq = null;
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+
+          // Check for section headers (ALL CAPS ending with colon)
+          if (line.match(/^[A-Z\s]+:$/)) {
+            // Save previous section if exists
+            if (currentSection && contentArray.length > 0) {
+              if (currentSection === "faqs") {
+                if (currentFaq && currentFaq.question && currentFaq.answer) {
+                  faqArray.push(currentFaq);
+                }
+                result[currentSection] = faqArray;
+              } else if (currentSubsection) {
+                result[currentSection] = currentSubsection;
+              } else {
+                result[currentSection] =
+                  contentArray.length === 1 ? contentArray[0] : contentArray;
+              }
+            }
+
+            // Start new section
+            const sectionName = line
+              .slice(0, -1)
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, "_");
+            currentSection = sectionName;
+            contentArray = [];
+            currentSubsection = null;
+            faqArray = [];
+            currentFaq = null;
+
+            if (
+              sectionName === "frequently_asked_questions" ||
+              sectionName === "faqs" ||
+              sectionName === "faq"
+            ) {
+              currentSection = "faqs";
+            } else if (sectionName === "taglines") {
+              // Handle taglines specially as array
+              result[currentSection] = [];
+            }
+            continue;
+          }
+
+          // Handle FAQ questions and answers
+          if (currentSection === "faqs") {
+            if (line.match(/^Q\d+:/i)) {
+              // Save previous FAQ if exists
+              if (currentFaq && currentFaq.question && currentFaq.answer) {
+                faqArray.push(currentFaq);
+              }
+              currentFaq = {
+                question: line.replace(/^Q\d+:\s*/i, "").trim(),
+                answer: "",
+              };
+            } else if (line.match(/^A\d+:/i)) {
+              if (currentFaq) {
+                currentFaq.answer = line.replace(/^A\d+:\s*/i, "").trim();
+              }
+            } else if (currentFaq && !currentFaq.answer) {
+              // Continuation of question
+              currentFaq.question += " " + line;
+            } else if (currentFaq && currentFaq.answer) {
+              // Continuation of answer
+              currentFaq.answer += " " + line;
+            }
+            continue;
+          }
+
+          // Handle numbered lists (1. 2. 3. etc)
+          if (line.match(/^\d+\.\s/)) {
+            const content = line.replace(/^\d+\.\s*/, "").trim();
+
+            // Check if this is part of a structured section (benefits, when_to_recite, etc)
+            if (
+              currentSection &&
+              (currentSection === "benefits" ||
+                currentSection === "when_to_recite" ||
+                currentSection === "how_to_perform" ||
+                currentSection === "when" ||
+                currentSection === "how")
+            ) {
+              if (!currentSubsection) {
+                currentSubsection = { content: [] };
+              }
+              if (!currentSubsection.content) {
+                currentSubsection.content = [];
+              }
+              currentSubsection.content.push(content);
+            } else {
+              contentArray.push(content);
+            }
+            continue;
+          }
+
+          // Regular content lines
+          if (currentSection) {
+            // Check if this could be a title or subtitle for structured sections
+            if (
+              !currentSubsection &&
+              (currentSection === "benefits" ||
+                currentSection === "when_to_recite" ||
+                currentSection === "how_to_perform" ||
+                currentSection === "when" ||
+                currentSection === "how")
+            ) {
+              if (!currentSubsection) {
+                currentSubsection = { title: line };
+              } else if (!currentSubsection.subtitle) {
+                currentSubsection.subtitle = line;
+              } else {
+                if (!currentSubsection.content) {
+                  currentSubsection.content = [];
+                }
+                currentSubsection.content.push(line);
+              }
+            } else if (currentSection === "taglines") {
+              // Split by commas for taglines
+              const tags = line
+                .split(",")
+                .map((t) => t.trim())
+                .filter((t) => t);
+              result[currentSection].push(...tags);
+            } else {
+              contentArray.push(line);
+            }
+          }
+        }
+
+        // Save last section
+        if (currentSection) {
+          if (currentSection === "faqs") {
+            if (currentFaq && currentFaq.question && currentFaq.answer) {
+              faqArray.push(currentFaq);
+            }
+            if (faqArray.length > 0) {
+              result[currentSection] = faqArray;
+            }
+          } else if (currentSubsection) {
+            result[currentSection] = currentSubsection;
+          } else if (contentArray.length > 0) {
+            result[currentSection] =
+              contentArray.length === 1 ? contentArray[0] : contentArray;
+          }
+        }
+
+        // If nothing was parsed, throw error
+        if (Object.keys(result).length === 0) {
+          throw new Error(
+            "Could not parse plain text. Please use proper section headers."
+          );
+        }
+
+        return result;
       }
 
       // Add current JSON to ID list
@@ -2162,7 +2393,32 @@
         }
 
         try {
-          const data = JSON.parse(input);
+          let data;
+          try {
+            // Try parsing as JSON first
+            data = JSON.parse(input);
+
+            // Handle double-encoded JSON
+            let parseCount = 1;
+            while (typeof data === "string" && parseCount < 10) {
+              try {
+                const temp = JSON.parse(data);
+                data = temp;
+                parseCount++;
+              } catch (e) {
+                break;
+              }
+            }
+
+            // If still a string, try plain text
+            if (typeof data === "string") {
+              data = parsePlainTextToJSON(data);
+            }
+          } catch (jsonError) {
+            // If JSON parsing fails, try plain text parsing
+            data = parsePlainTextToJSON(input);
+          }
+
           const id = dataStore.length + 1;
           const title = data.meta_title || data.title || `Data #${id}`;
 
@@ -2181,7 +2437,7 @@
           // Clear input after adding
           document.getElementById("jsonInput").value = "";
         } catch (e) {
-          errorText.textContent = "Invalid JSON: " + e.message;
+          errorText.textContent = "Invalid input format: " + e.message;
           errorMsg.classList.add("show");
         }
       }
