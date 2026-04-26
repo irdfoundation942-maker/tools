@@ -61,7 +61,7 @@ def json_to_normal_text(json_str):
     # Try to detect if this is a structured format we know
     has_known_structure = any(key in data for key in [
         'taglines', 'meta_title', 'benefits', 'when_to_recite', 
-        'how_to_perform', 'summary', 'faqs', 'meta_data', 
+        'how_to_perform', 'summary', 'faqs', 'faq', 'FAQs', 'FAQ', 'meta_data', 
         'todays_content', 'city_article', 'faq_section'
     ])
 
@@ -95,9 +95,15 @@ def json_to_normal_text(json_str):
             for item in data['summary']:
                 if item: parts.append(strip_html_tags(item))
 
-        # FAQ section
-        if 'faqs' in data and isinstance(data['faqs'], list):
-            for faq in data['faqs']:
+        # FAQ section (case-insensitive)
+        faq_key = None
+        for key in data.keys():
+            if key.lower() in ['faqs', 'faq']:
+                faq_key = key
+                break
+        
+        if faq_key and isinstance(data[faq_key], list):
+            for faq in data[faq_key]:
                 question = faq.get('question', '')
                 answer = faq.get('answer', '')
                 if question: parts.append(strip_html_tags(question))

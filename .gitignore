@@ -1,0 +1,5 @@
+GSC QUERY COLLECTOR -2/*.json
+GMAIL MANAGEMENT/*credentials*.json
+*.env
+credentials.json
+*credentials*.json

@@ -1,0 +1,76 @@
+/* Small niceties Tailwind doesn't cover out of the box. */
+
+th[data-sort] {
+  user-select: none;
+  white-space: nowrap;
+}
+th[data-sort]:hover {
+  background-color: #f1f5f9;
+}
+th[data-sort].sort-asc::after { content: " ▲"; font-size: 10px; color: #64748b; }
+th[data-sort].sort-desc::after { content: " ▼"; font-size: 10px; color: #64748b; }
+
+#activity-log li {
+  padding: 0.5rem 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.status-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.status-pill.replied { background: #dbeafe; color: #1d4ed8; }
+.status-pill.new     { background: #dcfce7; color: #166534; }
+.status-pill.failed  { background: #fee2e2; color: #b91c1c; }
+
+.label-chip {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+  margin: 1px 2px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.recipient-chip {
+  font-size: 11px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 9999px;
+  background: #eef4ff;
+  color: #1e3a8a;
+  border: 1px solid #c7d7ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.recipient-chip button {
+  color: #4f6bed;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+}
+.recipient-chip button:hover { color: #b91c1c; }
+
+.reply-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.reply-dot.yes { background: #10b981; }
+.reply-dot.no  { background: #cbd5e1; }

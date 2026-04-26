@@ -1,0 +1,11 @@
+mode,language,id,country,city,source_query,source_page,query,clicks,impressions,ctr,position
+page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,prayer time dhaka,937,366154,0.002559032538221623,4.9689556853127375
+page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,namaz time dhaka,937,366154,0.002559032538221623,4.9689556853127375
+page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,namaz time chittagong,83,40512,0.0020487756714060034,5.474377962085308
+page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,fajr namaz time chittagong,83,40512,0.0020487756714060034,5.474377962085308
+page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,asr time sylhet,24,20860,0.0011505273250239693,5.9183604985618405
+page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,full namaz time sylhet,24,20860,0.0011505273250239693,5.9183604985618405
+page_wise,en,940,bangladesh,comilla,,https://ihadis.com/en/countries/bangladesh/prayer-times-comilla,asr prayer time comilla,16,2284,0.0070052539404553416,6.164185639229422
+page_wise,en,940,bangladesh,comilla,,https://ihadis.com/en/countries/bangladesh/prayer-times-comilla,fajr last time comilla,16,2284,0.0070052539404553416,6.164185639229422
+page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,ajke magrib er azan,13,13113,0.0009913825974224052,6.457866239609547
+page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,eshar namaz time,13,13113,0.0009913825974224052,6.457866239609547

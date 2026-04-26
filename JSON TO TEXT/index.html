@@ -2653,8 +2653,15 @@
                 `;
         }
 
-        // FAQs
-        if (data.faqs && Array.isArray(data.faqs)) {
+        // FAQs (case-insensitive)
+        let faqData = null;
+        for (const key in data) {
+          if (key.toLowerCase() === "faqs" || key.toLowerCase() === "faq") {
+            faqData = data[key];
+            break;
+          }
+        }
+        if (faqData && Array.isArray(faqData)) {
           html += `
                     <div class="parsed-section fade-in">
                         <div class="section-header">
@@ -2662,7 +2669,7 @@
                             <span class="section-title">Frequently Asked Questions</span>
                         </div>
                         <div class="section-content">
-                            ${data.faqs
+                            ${faqData
                               .map(
                                 (faq) => `
                                 <div class="faq-item">
@@ -2856,7 +2863,9 @@
           data.when_to_recite ||
           data.how_to_perform ||
           data.summary ||
-          data.faqs;
+          Object.keys(data).some(
+            (key) => key.toLowerCase() === "faqs" || key.toLowerCase() === "faq"
+          );
 
         if (hasKnownStructure) {
           // Use the old structured approach for known formats
@@ -2896,10 +2905,17 @@
             text.push("");
           }
 
-          // FAQs
-          if (data.faqs && Array.isArray(data.faqs)) {
+          // FAQs (case-insensitive)
+          let faqData = null;
+          for (const key in data) {
+            if (key.toLowerCase() === "faqs" || key.toLowerCase() === "faq") {
+              faqData = data[key];
+              break;
+            }
+          }
+          if (faqData && Array.isArray(faqData)) {
             text.push("FREQUENTLY ASKED QUESTIONS:");
-            data.faqs.forEach((faq, i) => {
+            faqData.forEach((faq, i) => {
               text.push(`Q${i + 1}: ${faq.question}`);
               text.push(`A${i + 1}: ${faq.answer}`);
               text.push("");

@@ -1,0 +1,57 @@
+# Basic configuration and target settings
+credentials_file: gsc-dashboard-474505-12ef60690267.json
+site_url: sc-domain:ihadis.com
+target_url: https://ihadis.com/countries
+language_ids:
+  - en
+extraction_mode: page_wise
+
+# Query keyword matching and filtering settings
+query_regex:
+  enabled: false
+  patterns: prayer, namaz, salat, magrib, salah, esha, isha, solat
+
+# Data sorting preferences
+sorting:
+  sort_by: clicks
+  order: descending
+
+# Date range and delay settings
+date_range:
+  days: 7
+  delay_days: 0
+
+# API limits and parameters
+api:
+  row_limit: 25000
+
+# Row range limit settings
+range_filter:
+  enabled: false
+  start_row: 1
+  end_row: 10
+
+# Output grouping and display limits
+display:
+  top_queries_count: 0
+  pages_per_query: 5
+  queries_per_page: 2
+
+# Minimum performance thresholds
+min_filter:
+  impressions: null
+  clicks: 1
+
+# Output directory and CSV formatting settings
+output:
+  output_directory: output
+  prefix: top_kws
+  include_timestamp: false
+  separate_by_language: false
+  csv_delimiter: ","
+  csv_encoding: utf-8
+
+# Input and output paths for final processing
+final_format:
+  input_csv: output/top_kws_page_wise_clicks_7days.csv
+  output_csv: output/Input Data.csv
