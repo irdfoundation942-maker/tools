@@ -894,8 +894,8 @@
           <a href="#preview" class="nav-item"
             ><i data-lucide="table-2" class="h-4 w-4"></i>Results</a
           >
-          <a href="#import" class="nav-item"
-            ><i data-lucide="upload" class="h-4 w-4"></i>Import File</a
+          <a href="#import-city" class="nav-item"
+            ><i data-lucide="upload" class="h-4 w-4"></i>Convert to Publish Format</a
           >
         </nav>
       </aside>
@@ -1245,61 +1245,62 @@
             </div>
           </section>
 
-          <section id="import" class="mt-7 max-w-5xl mx-auto">
+
+          <section id="import-city" class="mt-7 max-w-5xl mx-auto">
             <div class="mb-4 flex items-end justify-between">
               <h2 class="text-[18px] font-bold text-slate-900">
-                Import File for Dashboard
+                AI Output Data Convert to Publish Format in Dashboard
               </h2>
             </div>
             <div class="card p-5 space-y-4">
               <div>
                 <label
-                  for="importFileName"
+                  for="cityImportFileName"
                   class="block text-[12.5px] font-semibold text-slate-700 mb-1"
-                  >Import File</label
+                  >Import File Name</label
                 >
                 <input
-                  id="importFileName"
+                  id="cityImportFileName"
                   type="text"
-                  placeholder="import_output"
+                  placeholder="city_import_output"
                   class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6]"
                 />
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label
-                    for="importSectionId"
+                    for="cityImportSectionId"
                     class="block text-[12.5px] font-semibold text-slate-700 mb-1"
                     >section_id</label
                   >
                   <input
-                    id="importSectionId"
+                    id="cityImportSectionId"
                     type="text"
-                    placeholder="(optional)"
+                    value="1"
                     class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6]"
                   />
                 </div>
                 <div>
                   <label
-                    for="importSiteId"
+                    for="cityImportSiteId"
                     class="block text-[12.5px] font-semibold text-slate-700 mb-1"
                     >site_id</label
                   >
                   <input
-                    id="importSiteId"
+                    id="cityImportSiteId"
                     type="text"
-                    placeholder="(optional)"
+                    value="3"
                     class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6]"
                   />
                 </div>
                 <div>
                   <label
-                    for="importTemplateId"
+                    for="cityImportTemplateId"
                     class="block text-[12.5px] font-semibold text-slate-700 mb-1"
                     >template_id</label
                   >
                   <input
-                    id="importTemplateId"
+                    id="cityImportTemplateId"
                     type="text"
                     placeholder="(optional)"
                     class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6]"
@@ -1309,14 +1310,14 @@
               <div>
                 <label
                   class="block text-[12.5px] font-semibold text-slate-700 mb-1"
-                  >Upload CSV or XLSX</label
+                  >Upload CSV or XLSX (type, language, id, city, json_response...)</label
                 >
                 <div
-                  id="importDropzone"
+                  id="cityImportDropzone"
                   class="rounded-xl border-2 border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-14 min-h-[220px] flex items-center justify-center text-center cursor-pointer transition hover:border-[#3B6FF6] hover:bg-[#eff4ff]"
                 >
                   <input
-                    id="importFileUpload"
+                    id="cityImportFileUpload"
                     type="file"
                     accept=".csv,.xlsx"
                     class="hidden"
@@ -1333,7 +1334,7 @@
                       or drag &amp; drop a .csv or .xlsx file here
                     </div>
                     <div
-                      id="importFileLabel"
+                      id="cityImportFileLabel"
                       class="text-[12px] text-slate-500"
                     >
                       No file selected
@@ -1343,14 +1344,14 @@
               </div>
               <div class="flex items-center gap-3 flex-wrap">
                 <button
-                  id="importProcessBtn"
+                  id="cityImportProcessBtn"
                   type="button"
                   class="btn btn-primary"
                 >
                   <i data-lucide="play" class="h-4 w-4"></i>Process
                 </button>
                 <button
-                  id="importDownloadBtn"
+                  id="cityImportDownloadBtn"
                   type="button"
                   class="btn btn-primary"
                   style="display: none"
@@ -1358,7 +1359,7 @@
                   <i data-lucide="download" class="h-4 w-4"></i>Download
                 </button>
                 <button
-                  id="importClearBtn"
+                  id="cityImportClearBtn"
                   type="button"
                   class="btn"
                   style="background: #f1f5f9; color: #334155"
@@ -1366,7 +1367,7 @@
                   <i data-lucide="x" class="h-4 w-4"></i>Clear
                 </button>
               </div>
-              <div id="importStatus" class="text-[12.5px] text-slate-600"></div>
+              <div id="cityImportStatus" class="text-[12.5px] text-slate-600"></div>
             </div>
           </section>
         </div>
@@ -1879,165 +1880,8 @@
 
     <script>
       (function () {
-        const statusEl = document.getElementById("importStatus");
-        const fileInput = document.getElementById("importFileUpload");
-        const nameInput = document.getElementById("importFileName");
-        const processBtn = document.getElementById("importProcessBtn");
-        const downloadBtn = document.getElementById("importDownloadBtn");
-        const clearBtn = document.getElementById("importClearBtn");
-        const sectionIdInput = document.getElementById("importSectionId");
-        const siteIdInput = document.getElementById("importSiteId");
-        const templateIdInput = document.getElementById("importTemplateId");
-        const dropzone = document.getElementById("importDropzone");
-        const fileLabel = document.getElementById("importFileLabel");
-        let outputCsv = "";
-        let droppedFile = null;
-
-        function currentFile() {
-          if (droppedFile) return droppedFile;
-          return fileInput.files && fileInput.files[0]
-            ? fileInput.files[0]
-            : null;
-        }
-
-        function updateFileLabel() {
-          const f = currentFile();
-          fileLabel.textContent = f ? f.name : "No file selected";
-          fileLabel.style.color = f ? "#0f172a" : "";
-        }
-
-        dropzone.addEventListener("click", function (e) {
-          if (e.target === fileInput) return;
-          fileInput.click();
-        });
-        fileInput.addEventListener("change", function () {
-          droppedFile = null;
-          updateFileLabel();
-        });
-        ["dragenter", "dragover"].forEach(function (ev) {
-          dropzone.addEventListener(ev, function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.add("border-[#3B6FF6]");
-            dropzone.style.background = "#eff4ff";
-          });
-        });
-        ["dragleave", "drop"].forEach(function (ev) {
-          dropzone.addEventListener(ev, function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.remove("border-[#3B6FF6]");
-            dropzone.style.background = "";
-          });
-        });
-        dropzone.addEventListener("drop", function (e) {
-          const files = e.dataTransfer && e.dataTransfer.files;
-          if (!files || !files.length) return;
-          const f = files[0];
-          const n = (f.name || "").toLowerCase();
-          if (!n.endsWith(".csv") && !n.endsWith(".xlsx")) {
-            flashDropzone("error");
-            setStatus("Unsupported file type. Use .csv or .xlsx.", "error");
-            return;
-          }
-          try {
-            const dt = new DataTransfer();
-            dt.items.add(f);
-            fileInput.files = dt.files;
-            droppedFile = null;
-          } catch (err) {
-            droppedFile = f;
-          }
-          updateFileLabel();
-          setStatus("");
-        });
-
-        clearBtn.addEventListener("click", function () {
-          fileInput.value = "";
-          droppedFile = null;
-          nameInput.value = "";
-          sectionIdInput.value = "";
-          siteIdInput.value = "";
-          templateIdInput.value = "";
-          outputCsv = "";
-          downloadBtn.style.display = "none";
-          dropzone.classList.remove(
-            "imp-dropzone-success",
-            "imp-dropzone-error",
-          );
-          updateFileLabel();
-          setStatus("");
-        });
-
-        const processBtnOriginalHTML = processBtn.innerHTML;
-
-        function setStatus(msg, kind) {
-          statusEl.classList.remove(
-            "imp-status-success",
-            "imp-status-error",
-            "imp-fade-in",
-          );
-          statusEl.style.color = "";
-          statusEl.innerHTML = "";
-          if (!msg) return;
-          if (kind === "error") {
-            statusEl.classList.add("imp-status-error");
-            statusEl.textContent = msg;
-          } else if (kind === "success") {
-            statusEl.classList.add("imp-status-success");
-            statusEl.innerHTML =
-              '<svg class="imp-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
-              msg;
-          } else {
-            statusEl.textContent = msg;
-          }
-          void statusEl.offsetWidth;
-          statusEl.classList.add("imp-fade-in");
-        }
-
-        function setProcessing(on) {
-          if (on) {
-            processBtn.classList.add("imp-btn-processing");
-            processBtn.disabled = true;
-            processBtn.innerHTML =
-              '<span class="imp-spinner"></span><span>Processing...</span>';
-            dropzone.classList.add("imp-dropzone-processing");
-            dropzone.classList.remove(
-              "imp-dropzone-success",
-              "imp-dropzone-error",
-            );
-          } else {
-            processBtn.classList.remove("imp-btn-processing");
-            processBtn.disabled = false;
-            processBtn.innerHTML = processBtnOriginalHTML;
-            dropzone.classList.remove("imp-dropzone-processing");
-            if (window.lucide && window.lucide.createIcons)
-              window.lucide.createIcons();
-          }
-        }
-
-        function flashDropzone(kind) {
-          const cls =
-            kind === "success" ? "imp-dropzone-success" : "imp-dropzone-error";
-          dropzone.classList.add(cls);
-          if (kind === "error") {
-            setTimeout(function () {
-              dropzone.classList.remove(cls);
-            }, 900);
-          }
-        }
-
-        function parseKeyword(str) {
-          const s = String(str || "");
-          const lang = s.match(/language\s*:\s*([^\s]+)/i);
-          const country = s.match(/country\s*:\s*([^\s]+)/i);
-          const city = s.match(/city\s*:\s*([^\s]+)/i);
-          return {
-            language: lang ? lang[1] : "",
-            country: country ? country[1] : "",
-            city: city ? city[1] : "",
-          };
-        }
+        // --- Shared Helpers ---
+        const get = (id) => document.getElementById(id);
 
         function pick(row, key) {
           if (row[key] != null) return row[key];
@@ -2046,24 +1890,6 @@
             if (String(k).toLowerCase() === lower) return row[k];
           }
           return "";
-        }
-
-        function transformRows(rows) {
-          const sectionId = (sectionIdInput.value || "").trim();
-          const siteId = (siteIdInput.value || "").trim();
-          const templateId = (templateIdInput.value || "").trim();
-          return rows.map(function (r) {
-            const parsed = parseKeyword(pick(r, "Keyword"));
-            return {
-              section_id: sectionId,
-              site_id: siteId,
-              template_id: templateId,
-              language_id: parsed.language,
-              country_slug: parsed.country,
-              city_slug: parsed.city,
-              contents: minifyResponse(pick(r, "Response")),
-            };
-          });
         }
 
         function minifyResponse(val) {
@@ -2077,117 +1903,11 @@
           }
         }
 
-        function finalize(rows) {
-          const transformed = transformRows(rows);
-          outputCsv = Papa.unparse(transformed, {
-            columns: [
-              "section_id",
-              "site_id",
-              "template_id",
-              "language_id",
-              "country_slug",
-              "city_slug",
-              "contents",
-            ],
-          });
-          downloadBtn.style.display = "";
-          downloadBtn.classList.remove("imp-fade-in");
-          void downloadBtn.offsetWidth;
-          downloadBtn.classList.add("imp-fade-in");
-          flashDropzone("success");
-          setProcessing(false);
-          setStatus(
-            "Processed " + transformed.length + " row(s). Ready to download.",
-            "success",
-          );
-          if (window.showModal) {
-            showModal({
-              title: "File Processed",
-              message:
-                "Successfully processed <strong>" +
-                transformed.length +
-                "</strong> row(s). Your file is ready to download.",
-              type: "success",
-            });
-          }
-        }
-
-        function failProcessing(msg) {
-          setProcessing(false);
-          flashDropzone("error");
-          setStatus(msg, "error");
-          if (window.showModal) {
-            showModal({
-              title: "Processing Failed",
-              message: msg,
-              type: "error",
-            });
-          }
-        }
-
-        processBtn.addEventListener("click", function () {
-          const file = currentFile();
-          if (!file) {
-            failProcessing("Please choose a .csv or .xlsx file first.");
-            return;
-          }
-          downloadBtn.style.display = "none";
-          outputCsv = "";
-          dropzone.classList.remove(
-            "imp-dropzone-success",
-            "imp-dropzone-error",
-          );
-          const name = (file.name || "").toLowerCase();
-          setProcessing(true);
-          setStatus("Processing...");
-          const run = function () {
-            if (name.endsWith(".csv")) {
-              Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function (res) {
-                  try {
-                    finalize(res.data || []);
-                  } catch (e) {
-                    failProcessing("Error: " + e.message);
-                  }
-                },
-                error: function (err) {
-                  failProcessing("Parse error: " + err.message);
-                },
-              });
-            } else if (name.endsWith(".xlsx")) {
-              const reader = new FileReader();
-              reader.onload = function (e) {
-                try {
-                  const wb = XLSX.read(new Uint8Array(e.target.result), {
-                    type: "array",
-                  });
-                  const ws = wb.Sheets[wb.SheetNames[0]];
-                  const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
-                  finalize(rows);
-                } catch (err) {
-                  failProcessing("Error: " + err.message);
-                }
-              };
-              reader.onerror = function () {
-                failProcessing("Failed to read file.");
-              };
-              reader.readAsArrayBuffer(file);
-            } else {
-              failProcessing("Unsupported file type. Use .csv or .xlsx.");
-            }
-          };
-          setTimeout(run, 350);
-        });
-
-        downloadBtn.addEventListener("click", function () {
-          if (!outputCsv) return;
-          let fname = (nameInput.value || "").trim() || "import_output";
+        function downloadCSV(csv, filename) {
+          if (!csv) return;
+          let fname = (filename || "").trim() || "output";
           if (!/\.csv$/i.test(fname)) fname += ".csv";
-          const blob = new Blob([outputCsv], {
-            type: "text/csv;charset=utf-8;",
-          });
+          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -2195,54 +1915,284 @@
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          setTimeout(function () {
-            URL.revokeObjectURL(url);
-          }, 0);
-          setStatus("Downloaded " + fname, "success");
-        });
-
-        if (window.lucide && typeof window.lucide.createIcons === "function") {
-          window.lucide.createIcons();
+          setTimeout(() => URL.revokeObjectURL(url), 0);
         }
 
-        const importSection = document.getElementById("import");
-        const otherSections = [
-          document.getElementById("config"),
-          document.getElementById("preview"),
-        ].filter(Boolean);
+        // --- Routing ---
+        const sections = {
+          config: get("config"),
+          preview: get("preview"),
+          import: get("import"),
+          importCity: get("import-city")
+        };
         const navLinks = document.querySelectorAll("aside nav .nav-item");
 
         function applyRoute() {
-          const isImport = window.location.hash === "#import";
-          if (isImport) {
-            otherSections.forEach(function (s) {
-              s.style.display = "none";
-            });
-            importSection.style.display = "";
-          } else {
-            otherSections.forEach(function (s) {
-              s.style.display = "";
-            });
-            importSection.style.display = "none";
-          }
-          navLinks.forEach(function (a) {
-            const href = a.getAttribute("href") || "";
-            const isActive =
-              (isImport && href === "#import") ||
-              (!isImport &&
-                (href === "#" || href === "" || href === window.location.hash));
-            a.classList.toggle("active", !!isActive);
+          const hash = window.location.hash || "#";
+          const isImport = hash === "#import";
+          const isImportCity = hash === "#import-city";
+
+          if (sections.config) sections.config.style.display = (!isImport && !isImportCity) ? "" : "none";
+          if (sections.preview) sections.preview.style.display = (!isImport && !isImportCity) ? "" : "none";
+          if (sections.import) sections.import.style.display = isImport ? "" : "none";
+          if (sections.importCity) sections.importCity.style.display = isImportCity ? "" : "none";
+
+          navLinks.forEach(a => {
+            const href = a.getAttribute("href");
+            const active = (hash === href) || (hash === "#" && href === "#");
+            a.classList.toggle("active", active);
           });
-          if (!isImport) {
-            const anyActive = Array.from(navLinks).some(function (a) {
-              return a.classList.contains("active");
+        }
+        window.addEventListener("hashchange", applyRoute);
+        applyRoute();
+
+        // --- Setup Import Factory ---
+        function createImportHandler(options) {
+          const {
+            statusId, fileInputId, nameInputId, processBtnId, downloadBtnId, clearBtnId,
+            dropzoneId, fileLabelId, transformFn, extraFields = []
+          } = options;
+
+          const statusEl = get(statusId);
+          const fileInput = get(fileInputId);
+          const nameInput = get(nameInputId);
+          const processBtn = get(processBtnId);
+          const downloadBtn = get(downloadBtnId);
+          const clearBtn = get(clearBtnId);
+          const dropzone = get(dropzoneId);
+          const fileLabel = get(fileLabelId);
+          const extraFieldEls = extraFields.map(id => get(id));
+
+          let outputCsv = "";
+          let droppedFile = null;
+          const originalProcessHTML = processBtn.innerHTML;
+
+          function currentFile() {
+            return droppedFile || (fileInput.files && fileInput.files[0]) || null;
+          }
+
+          function updateFileLabel() {
+            const f = currentFile();
+            fileLabel.textContent = f ? f.name : "No file selected";
+            fileLabel.style.color = f ? "#0f172a" : "";
+          }
+
+          function setStatus(msg, kind) {
+            statusEl.classList.remove("imp-status-success", "imp-status-error", "imp-fade-in");
+            statusEl.style.color = "";
+            statusEl.innerHTML = "";
+            if (!msg) return;
+            if (kind === "error") {
+              statusEl.classList.add("imp-status-error");
+              statusEl.textContent = msg;
+            } else if (kind === "success") {
+              statusEl.classList.add("imp-status-success");
+              statusEl.innerHTML = '<svg class="imp-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' + msg;
+            } else {
+              statusEl.textContent = msg;
+            }
+            void statusEl.offsetWidth;
+            statusEl.classList.add("imp-fade-in");
+          }
+
+          function setProcessing(on) {
+            if (on) {
+              processBtn.classList.add("imp-btn-processing");
+              processBtn.disabled = true;
+              processBtn.innerHTML = '<span class="imp-spinner"></span><span>Processing...</span>';
+              dropzone.classList.add("imp-dropzone-processing");
+              dropzone.classList.remove("imp-dropzone-success", "imp-dropzone-error");
+            } else {
+              processBtn.classList.remove("imp-btn-processing");
+              processBtn.disabled = false;
+              processBtn.innerHTML = originalProcessHTML;
+              dropzone.classList.remove("imp-dropzone-processing");
+              if (window.lucide) window.lucide.createIcons();
+            }
+          }
+
+          function flashDropzone(kind) {
+            const cls = kind === "success" ? "imp-dropzone-success" : "imp-dropzone-error";
+            dropzone.classList.add(cls);
+            if (kind === "error") setTimeout(() => dropzone.classList.remove(cls), 900);
+          }
+
+          dropzone.addEventListener("click", (e) => { if (e.target !== fileInput) fileInput.click(); });
+          fileInput.addEventListener("change", () => { droppedFile = null; updateFileLabel(); });
+          
+          ["dragenter", "dragover"].forEach(ev => {
+            dropzone.addEventListener(ev, (e) => {
+              e.preventDefault(); e.stopPropagation();
+              dropzone.classList.add("border-[#3B6FF6]");
+              dropzone.style.background = "#eff4ff";
             });
-            if (!anyActive && navLinks[0]) navLinks[0].classList.add("active");
+          });
+          ["dragleave", "drop"].forEach(ev => {
+            dropzone.addEventListener(ev, (e) => {
+              e.preventDefault(); e.stopPropagation();
+              dropzone.classList.remove("border-[#3B6FF6]");
+              dropzone.style.background = "";
+            });
+          });
+          dropzone.addEventListener("drop", (e) => {
+            const files = e.dataTransfer && e.dataTransfer.files;
+            if (!files || !files.length) return;
+            const f = files[0];
+            const n = (f.name || "").toLowerCase();
+            if (!n.endsWith(".csv") && !n.endsWith(".xlsx")) {
+              flashDropzone("error");
+              setStatus("Unsupported file type. Use .csv or .xlsx.", "error");
+              return;
+            }
+            try {
+              const dt = new DataTransfer();
+              dt.items.add(f);
+              fileInput.files = dt.files;
+              droppedFile = null;
+            } catch (err) {
+              droppedFile = f;
+            }
+            updateFileLabel();
+            setStatus("");
+          });
+
+          clearBtn.addEventListener("click", () => {
+            fileInput.value = "";
+            droppedFile = null;
+            nameInput.value = "";
+            extraFieldEls.forEach(el => {
+              if (el.id.includes("Template")) el.value = "";
+              else if (el.id.includes("Section")) el.value = "1";
+              else if (el.id.includes("Site")) el.value = "3";
+              else el.value = "";
+            });
+            outputCsv = "";
+            downloadBtn.style.display = "none";
+            dropzone.classList.remove("imp-dropzone-success", "imp-dropzone-error");
+            updateFileLabel();
+            setStatus("");
+          });
+
+          processBtn.addEventListener("click", async () => {
+            const file = currentFile();
+            if (!file) {
+              setStatus("Please choose a file first.", "error");
+              flashDropzone("error");
+              return;
+            }
+            setProcessing(true);
+            setStatus("Processing...");
+            
+            try {
+              let rows = [];
+              if (file.name.toLowerCase().endsWith(".csv")) {
+                rows = await new Promise((resolve, reject) => {
+                  Papa.parse(file, {
+                    header: true, skipEmptyLines: true,
+                    complete: (res) => resolve(res.data),
+                    error: (err) => reject(err)
+                  });
+                });
+              } else {
+                const buffer = await file.arrayBuffer();
+                const wb = XLSX.read(new Uint8Array(buffer), { type: "array" });
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+              }
+
+              const transformed = await transformFn(rows);
+              outputCsv = Papa.unparse(transformed, {
+                columns: options.outputColumns
+              });
+
+              downloadBtn.style.display = "";
+              flashDropzone("success");
+              setProcessing(false);
+              setStatus(`Processed ${transformed.length} row(s). Ready to download.`, "success");
+              
+              if (window.showModal) {
+                showModal({
+                  title: "File Processed",
+                  message: `Successfully processed <strong>${transformed.length}</strong> row(s).`,
+                  type: "success"
+                });
+              }
+            } catch (err) {
+              setProcessing(false);
+              flashDropzone("error");
+              setStatus(err.message, "error");
+            }
+          });
+
+          downloadBtn.addEventListener("click", () => {
+            downloadCSV(outputCsv, nameInput.value || options.defaultFileName);
+            setStatus("Downloaded output.", "success");
+          });
+        }
+
+        // --- Original AI Import Handler ---
+        /* Removed original AI import handler */
+
+        // --- New City JSON Import Handler ---
+        let citiesDataCache = null;
+        async function getCitiesMap() {
+          if (citiesDataCache) return citiesDataCache;
+          try {
+            const res = await fetch("all-cities.csv");
+            if (!res.ok) throw new Error("Could not find all-cities.csv on server.");
+            const text = await res.text();
+            const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+            const map = new Map();
+            parsed.data.forEach(row => {
+              const key = `${row.id}|${(row.city || "").toLowerCase()}`;
+              map.set(key, { country: row.country, city: row.city });
+            });
+            citiesDataCache = map;
+            return map;
+          } catch (e) {
+            throw new Error("Failed to load all-cities.csv: " + e.message);
           }
         }
 
-        window.addEventListener("hashchange", applyRoute);
-        applyRoute();
+        createImportHandler({
+          statusId: "cityImportStatus",
+          fileInputId: "cityImportFileUpload",
+          nameInputId: "cityImportFileName",
+          processBtnId: "cityImportProcessBtn",
+          downloadBtnId: "cityImportDownloadBtn",
+          clearBtnId: "cityImportClearBtn",
+          dropzoneId: "cityImportDropzone",
+          fileLabelId: "cityImportFileLabel",
+          defaultFileName: "city_import_output",
+          extraFields: ["cityImportSectionId", "cityImportSiteId", "cityImportTemplateId"],
+          outputColumns: ["id", "section_id", "site_id", "language_id", "template_id", "country_slug", "city_slug", "contents"],
+          transformFn: async (rows) => {
+            const citiesMap = await getCitiesMap();
+            const sectionId = (get("cityImportSectionId").value || "1").trim();
+            const siteId = (get("cityImportSiteId").value || "3").trim();
+            const templateId = (get("cityImportTemplateId").value || "").trim();
+
+            return rows.map(r => {
+              const idVal = pick(r, "id");
+              const cityVal = pick(r, "city");
+              const lookupKey = `${idVal}|${(cityVal || "").toLowerCase()}`;
+              const match = citiesMap.get(lookupKey);
+
+              return {
+                id: idVal,
+                section_id: sectionId,
+                site_id: siteId,
+                language_id: pick(r, "language"),
+                template_id: templateId,
+                country_slug: match ? match.country : "",
+                city_slug: match ? match.city : cityVal,
+                contents: minifyResponse(pick(r, "json_response"))
+              };
+            });
+          }
+        });
+
+        if (window.lucide) window.lucide.createIcons();
       })();
     </script>
 
