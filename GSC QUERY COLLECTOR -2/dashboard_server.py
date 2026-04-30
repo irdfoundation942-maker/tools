@@ -16,6 +16,11 @@ CONFIG_PATH = BASE_DIR / "config.yaml"
 app = Flask(__name__, static_folder=None)
 
 
+@app.route("/")
+def index():
+    return send_file(str(BASE_DIR / "dashboard.html"))
+
+
 def load_config():
     if not CONFIG_PATH.exists():
         return {}
