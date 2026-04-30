@@ -34,8 +34,8 @@ range_filter:
 # Output grouping and display limits
 display:
   top_queries_count: 0
-  pages_per_query: 5
-  queries_per_page: 2
+  pages_per_query: 10
+  queries_per_page: 5
 
 # Minimum performance thresholds
 min_filter:

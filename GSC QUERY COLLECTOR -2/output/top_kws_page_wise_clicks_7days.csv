@@ -1,11 +1,51 @@
 mode,language,id,country,city,source_query,source_page,query,clicks,impressions,ctr,position
 page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,fazr waqt today,476,249363,0.0019088637849239863,5.9199279764840815
 page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,prayer time dhaka,476,249363,0.0019088637849239863,5.9199279764840815
+page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,fajr time dhaka,476,249363,0.0019088637849239863,5.9199279764840815
+page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,namaz time dhaka,476,249363,0.0019088637849239863,5.9199279764840815
+page_wise,en,923,bangladesh,dhaka,,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,maghrib time dhaka,476,249363,0.0019088637849239863,5.9199279764840815
 page_wise,en,10325,spain,murcia,,https://ihadis.com/en/countries/spain/prayer-times-murcia,3asr prayer time,25,81,0.30864197530864196,7.432098765432099
 page_wise,en,10325,spain,murcia,,https://ihadis.com/en/countries/spain/prayer-times-murcia,asorer namaz last time today,25,81,0.30864197530864196,7.432098765432099
+page_wise,en,10325,spain,murcia,,https://ihadis.com/en/countries/spain/prayer-times-murcia,dhuhr prayer time,25,81,0.30864197530864196,7.432098765432099
+page_wise,en,10325,spain,murcia,,https://ihadis.com/en/countries/spain/prayer-times-murcia,fajr ending time today,25,81,0.30864197530864196,7.432098765432099
+page_wise,en,10325,spain,murcia,,https://ihadis.com/en/countries/spain/prayer-times-murcia,isha prayer time,25,81,0.30864197530864196,7.432098765432099
 page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,fajr time today,21,11013,0.0019068373740125306,7.275220194315809
 page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,asr last time today,21,11013,0.0019068373740125306,7.275220194315809
+page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,asr prayer last time today,21,11013,0.0019068373740125306,7.275220194315809
+page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,bangladesh salah time,21,11013,0.0019068373740125306,7.275220194315809
+page_wise,en,,bangladesh,,,https://ihadis.com/en/countries/bangladesh,esha start time,21,11013,0.0019068373740125306,7.275220194315809
 page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,prayer time in chittagong bangladesh,20,16124,0.0012403870007442323,7.362565120317539
 page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,today fajr last time in chittagong,20,16124,0.0012403870007442323,7.362565120317539
+page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,today last time of johor,20,16124,0.0012403870007442323,7.362565120317539
+page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,asr namaz time chittagong,20,16124,0.0012403870007442323,7.362565120317539
+page_wise,en,924,bangladesh,chattogram,,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,fajr azan time chittagong,20,16124,0.0012403870007442323,7.362565120317539
 page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,dhuhr time sylhet,10,12484,0.0008010253123998718,6.5984460108939444
 page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,islamic prayer times,10,12484,0.0008010253123998718,6.5984460108939444
+page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,maghrib azan time sylhet,10,12484,0.0008010253123998718,6.5984460108939444
+page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,maghrib prayer time,10,12484,0.0008010253123998718,6.5984460108939444
+page_wise,en,931,bangladesh,sylhet,,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,namaz time,10,12484,0.0008010253123998718,6.5984460108939444
+page_wise,en,953,bangladesh,coxs-bazar,,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,cox's bazar prayer time,8,1452,0.005509641873278237,6.170110192837465
+page_wise,en,953,bangladesh,coxs-bazar,,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,prayer time cox's bazar,8,1452,0.005509641873278237,6.170110192837465
+page_wise,en,953,bangladesh,coxs-bazar,,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,today fajr last time cox's bazar,8,1452,0.005509641873278237,6.170110192837465
+page_wise,en,953,bangladesh,coxs-bazar,,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,asr namaz time cox's bazar,8,1452,0.005509641873278237,6.170110192837465
+page_wise,en,953,bangladesh,coxs-bazar,,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,asr prayer time cox's bazar,8,1452,0.005509641873278237,6.170110192837465
+page_wise,en,926,bangladesh,rajshahi,,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,"5 prayer time in rajshahi, bangladesh",7,1516,0.004617414248021108,5.715699208443271
+page_wise,en,926,bangladesh,rajshahi,,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,asr namaz last time rajshahi,7,1516,0.004617414248021108,5.715699208443271
+page_wise,en,926,bangladesh,rajshahi,,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,asr namaz time rajshahi,7,1516,0.004617414248021108,5.715699208443271
+page_wise,en,926,bangladesh,rajshahi,,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,asr prayer time rajshahi,7,1516,0.004617414248021108,5.715699208443271
+page_wise,en,926,bangladesh,rajshahi,,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,asr prayer time rajshahi bangladesh today,7,1516,0.004617414248021108,5.715699208443271
+page_wise,en,9487,saudi-arabia,medina,,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,jummah prayer time in madinah,6,2983,0.002011397921555481,6.963794837412001
+page_wise,en,9487,saudi-arabia,medina,,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,madina namaz time,6,2983,0.002011397921555481,6.963794837412001
+page_wise,en,9487,saudi-arabia,medina,,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,madina namaz time table,6,2983,0.002011397921555481,6.963794837412001
+page_wise,en,9487,saudi-arabia,medina,,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,madinah salah time,6,2983,0.002011397921555481,6.963794837412001
+page_wise,en,9487,saudi-arabia,medina,,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,adhan time in madina,6,2983,0.002011397921555481,6.963794837412001
+page_wise,en,,singapore,,,https://ihadis.com/en/countries/singapore,azan maghrib,6,8922,0.0006724949562878278,8.36348352387357
+page_wise,en,,singapore,,,https://ihadis.com/en/countries/singapore,prayer time here,6,8922,0.0006724949562878278,8.36348352387357
+page_wise,en,,singapore,,,https://ihadis.com/en/countries/singapore,what time is solat maghrib,6,8922,0.0006724949562878278,8.36348352387357
+page_wise,en,,singapore,,,https://ihadis.com/en/countries/singapore,.maghrib time,6,8922,0.0006724949562878278,8.36348352387357
+page_wise,en,,singapore,,,https://ihadis.com/en/countries/singapore,5 prayer timings,6,8922,0.0006724949562878278,8.36348352387357
+page_wise,en,930,bangladesh,mymensingh,,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,asr time mymensingh,5,1905,0.0026246719160104987,6.767979002624672
+page_wise,en,930,bangladesh,mymensingh,,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,namaz time mymensingh,5,1905,0.0026246719160104987,6.767979002624672
+page_wise,en,930,bangladesh,mymensingh,,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,asar namaz time mymensingh,5,1905,0.0026246719160104987,6.767979002624672
+page_wise,en,930,bangladesh,mymensingh,,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,asr namaz last time mymensingh,5,1905,0.0026246719160104987,6.767979002624672
+page_wise,en,930,bangladesh,mymensingh,,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,asr namaz time mymensingh,5,1905,0.0026246719160104987,6.767979002624672

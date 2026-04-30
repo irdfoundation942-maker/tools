@@ -1,6 +1,11 @@
 language,id,country,city,page,queries,clicks,impressions,ctr,position
-en,923,bangladesh,dhaka,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,"fazr waqt today, prayer time dhaka",476,249363,0.001909,5.919928
-en,10325,spain,murcia,https://ihadis.com/en/countries/spain/prayer-times-murcia,"3asr prayer time, asorer namaz last time today",25,81,0.308642,7.432099
-en,,bangladesh,,https://ihadis.com/en/countries/bangladesh,"fajr time today, asr last time today",21,11013,0.001907,7.27522
-en,924,bangladesh,chattogram,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,"prayer time in chittagong bangladesh, today fajr last time in chittagong",20,16124,0.00124,7.362565
-en,931,bangladesh,sylhet,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,"dhuhr time sylhet, islamic prayer times",10,12484,0.000801,6.598446
+en,923,bangladesh,dhaka,https://ihadis.com/en/countries/bangladesh/prayer-times-dhaka,"fazr waqt today, prayer time dhaka, fajr time dhaka, namaz time dhaka, maghrib time dhaka",476,249363,0.001909,5.919928
+en,10325,spain,murcia,https://ihadis.com/en/countries/spain/prayer-times-murcia,"3asr prayer time, asorer namaz last time today, dhuhr prayer time, fajr ending time today, isha prayer time",25,81,0.308642,7.432099
+en,,bangladesh,,https://ihadis.com/en/countries/bangladesh,"fajr time today, asr last time today, asr prayer last time today, bangladesh salah time, esha start time",21,11013,0.001907,7.27522
+en,924,bangladesh,chattogram,https://ihadis.com/en/countries/bangladesh/prayer-times-chattogram,"prayer time in chittagong bangladesh, today fajr last time in chittagong, today last time of johor, asr namaz time chittagong, fajr azan time chittagong",20,16124,0.00124,7.362565
+en,931,bangladesh,sylhet,https://ihadis.com/en/countries/bangladesh/prayer-times-sylhet,"dhuhr time sylhet, islamic prayer times, maghrib azan time sylhet, maghrib prayer time, namaz time",10,12484,0.000801,6.598446
+en,953,bangladesh,coxs-bazar,https://ihadis.com/en/countries/bangladesh/prayer-times-coxs-bazar,"cox's bazar prayer time, prayer time cox's bazar, today fajr last time cox's bazar, asr namaz time cox's bazar, asr prayer time cox's bazar",8,1452,0.00551,6.17011
+en,926,bangladesh,rajshahi,https://ihadis.com/en/countries/bangladesh/prayer-times-rajshahi,"5 prayer time in rajshahi, bangladesh, asr namaz last time rajshahi, asr namaz time rajshahi, asr prayer time rajshahi, asr prayer time rajshahi bangladesh today",7,1516,0.004617,5.715699
+en,9487,saudi-arabia,medina,https://ihadis.com/en/countries/saudi-arabia/prayer-times-medina,"jummah prayer time in madinah, madina namaz time, madina namaz time table, madinah salah time, adhan time in madina",6,2983,0.002011,6.963795
+en,,singapore,,https://ihadis.com/en/countries/singapore,"azan maghrib, prayer time here, what time is solat maghrib, .maghrib time, 5 prayer timings",6,8922,0.000672,8.363484
+en,930,bangladesh,mymensingh,https://ihadis.com/en/countries/bangladesh/prayer-times-mymensingh,"asr time mymensingh, namaz time mymensingh, asar namaz time mymensingh, asr namaz last time mymensingh, asr namaz time mymensingh",5,1905,0.002625,6.767979

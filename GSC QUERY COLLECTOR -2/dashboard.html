@@ -897,6 +897,9 @@
           <a href="#import-city" class="nav-item"
             ><i data-lucide="upload" class="h-4 w-4"></i>Convert to Publish Format</a
           >
+          <a href="#json-formatter" class="nav-item"
+            ><i data-lucide="file-json" class="h-4 w-4"></i>JSON Formatter</a
+          >
         </nav>
       </aside>
 
@@ -1249,7 +1252,7 @@
           <section id="import-city" class="mt-7 max-w-5xl mx-auto">
             <div class="mb-4 flex items-end justify-between">
               <h2 class="text-[18px] font-bold text-slate-900">
-                AI Output Data Convert to Publish Format in Dashboard
+                Convert to Publish Format
               </h2>
             </div>
             <div class="card p-5 space-y-4">
@@ -1368,6 +1371,53 @@
                 </button>
               </div>
               <div id="cityImportStatus" class="text-[12.5px] text-slate-600"></div>
+            </div>
+          </section>
+
+          <section id="json-formatter" class="mt-7 max-w-5xl mx-auto" style="display: none;">
+            <div class="mb-4 flex items-end justify-between">
+              <h2 class="text-[18px] font-bold text-slate-900">
+                JSON Formatter
+              </h2>
+            </div>
+            <div class="card p-5 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="jsonFileName" class="block text-[12.5px] font-semibold text-slate-700 mb-1">Export File Name</label>
+                  <input id="jsonFileName" type="text" placeholder="formatted_json" class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6]" />
+                </div>
+                <div>
+                  <label for="jsonColumnSelect" class="block text-[12.5px] font-semibold text-slate-700 mb-1">Select Column to Format</label>
+                  <select id="jsonColumnSelect" class="w-full rounded-lg border border-[#E2E8F0] px-3 py-2 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#3B6FF6] bg-white">
+                    <option value="">Upload a file first</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1">Upload CSV or XLSX</label>
+                <div id="jsonDropzone" class="rounded-xl border-2 border-dashed border-[#CBD5E1] bg-[#F8FAFC] px-4 py-10 min-h-[180px] flex items-center justify-center text-center cursor-pointer transition hover:border-[#3B6FF6] hover:bg-[#eff4ff]">
+                  <input id="jsonFileUpload" type="file" accept=".csv,.xlsx" class="hidden" />
+                  <div class="flex flex-col items-center gap-2">
+                    <i data-lucide="cloud-upload" class="h-7 w-7 text-[#3b6ff6]"></i>
+                    <div class="text-[13px] text-slate-700">
+                      <span class="font-semibold text-[#3b6ff6]">Click to browse</span> or drag &amp; drop a file here
+                    </div>
+                    <div id="jsonFileLabel" class="text-[12px] text-slate-500">No file selected</div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 flex-wrap">
+                <button id="jsonProcessBtn" type="button" class="btn btn-primary">
+                  <i data-lucide="play" class="h-4 w-4"></i>Process & Update
+                </button>
+                <button id="jsonDownloadBtn" type="button" class="btn btn-primary" style="display: none">
+                  <i data-lucide="download" class="h-4 w-4"></i>Download Updated File
+                </button>
+                <button id="jsonClearBtn" type="button" class="btn" style="background: #f1f5f9; color: #334155">
+                  <i data-lucide="x" class="h-4 w-4"></i>Clear
+                </button>
+              </div>
+              <div id="jsonStatus" class="text-[12.5px] text-slate-600"></div>
             </div>
           </section>
         </div>
@@ -1923,7 +1973,8 @@
           config: get("config"),
           preview: get("preview"),
           import: get("import"),
-          importCity: get("import-city")
+          importCity: get("import-city"),
+          jsonFormatter: get("json-formatter")
         };
         const navLinks = document.querySelectorAll("aside nav .nav-item");
 
@@ -1931,11 +1982,13 @@
           const hash = window.location.hash || "#";
           const isImport = hash === "#import";
           const isImportCity = hash === "#import-city";
+          const isJsonFormatter = hash === "#json-formatter";
 
-          if (sections.config) sections.config.style.display = (!isImport && !isImportCity) ? "" : "none";
-          if (sections.preview) sections.preview.style.display = (!isImport && !isImportCity) ? "" : "none";
+          if (sections.config) sections.config.style.display = (!isImport && !isImportCity && !isJsonFormatter) ? "" : "none";
+          if (sections.preview) sections.preview.style.display = (!isImport && !isImportCity && !isJsonFormatter) ? "" : "none";
           if (sections.import) sections.import.style.display = isImport ? "" : "none";
           if (sections.importCity) sections.importCity.style.display = isImportCity ? "" : "none";
+          if (sections.jsonFormatter) sections.jsonFormatter.style.display = isJsonFormatter ? "" : "none";
 
           navLinks.forEach(a => {
             const href = a.getAttribute("href");
@@ -2191,6 +2244,158 @@
             });
           }
         });
+
+        // --- JSON Formatter Handler ---
+        (function() {
+          const statusEl = get("jsonStatus");
+          const fileInput = get("jsonFileUpload");
+          const nameInput = get("jsonFileName");
+          const columnSelect = get("jsonColumnSelect");
+          const processBtn = get("jsonProcessBtn");
+          const downloadBtn = get("jsonDownloadBtn");
+          const clearBtn = get("jsonClearBtn");
+          const dropzone = get("jsonDropzone");
+          const fileLabel = get("jsonFileLabel");
+
+          let parsedRows = [];
+          let updatedFileContent = null;
+          let originalFileType = ""; // "csv" or "xlsx"
+
+          function setStatus(msg, kind) {
+            statusEl.className = "text-[12.5px] " + (kind === "error" ? "imp-status-error" : kind === "success" ? "imp-status-success" : "text-slate-600");
+            statusEl.innerHTML = kind === "success" ? '<svg class="imp-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' + msg : msg;
+          }
+
+          async function handleFile(file) {
+            if (!file) return;
+            originalFileType = file.name.toLowerCase().endsWith(".csv") ? "csv" : "xlsx";
+            try {
+              if (originalFileType === "csv") {
+                parsedRows = await new Promise((resolve, reject) => {
+                  Papa.parse(file, {
+                    header: true, skipEmptyLines: true,
+                    complete: (res) => resolve(res.data),
+                    error: (err) => reject(err)
+                  });
+                });
+              } else {
+                const buffer = await file.arrayBuffer();
+                const wb = XLSX.read(new Uint8Array(buffer), { type: "array" });
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                parsedRows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+              }
+
+              if (parsedRows.length === 0) throw new Error("File is empty.");
+
+              const headers = Object.keys(parsedRows[0]);
+              columnSelect.innerHTML = headers.map(h => `<option value="${h}">${h}</option>`).join("");
+              fileLabel.textContent = file.name;
+              fileLabel.style.color = "#0f172a";
+              setStatus(`Loaded ${parsedRows.length} rows. Select column to update.`);
+            } catch (err) {
+              setStatus(err.message, "error");
+            }
+          }
+
+          fileInput.addEventListener("change", () => handleFile(fileInput.files[0]));
+          dropzone.addEventListener("click", () => fileInput.click());
+          
+          dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("border-[#3B6FF6]"); });
+          dropzone.addEventListener("dragleave", () => dropzone.classList.remove("border-[#3B6FF6]"));
+          dropzone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("border-[#3B6FF6]");
+            const file = e.dataTransfer.files[0];
+            if (file) handleFile(file);
+          });
+
+          clearBtn.addEventListener("click", () => {
+            fileInput.value = "";
+            parsedRows = [];
+            updatedFileContent = null;
+            columnSelect.innerHTML = '<option value="">Upload a file first</option>';
+            fileLabel.textContent = "No file selected";
+            fileLabel.style.color = "";
+            downloadBtn.style.display = "none";
+            setStatus("");
+          });
+
+          processBtn.addEventListener("click", () => {
+            if (parsedRows.length === 0) {
+              setStatus("Please upload a file first.", "error");
+              return;
+            }
+            const col = columnSelect.value;
+            if (!col) {
+              setStatus("Please select a column.", "error");
+              return;
+            }
+
+            try {
+              let errorCount = 0;
+              let successCount = 0;
+
+              const updatedRows = parsedRows.map((row) => {
+                const newRow = { ...row };
+                let val = newRow[col];
+                
+                if (val != null && val !== "") {
+                  try {
+                    // Minify JSON if valid
+                    const parsed = JSON.parse(val);
+                    newRow[col] = JSON.stringify(parsed); // Minified
+                    successCount++;
+                  } catch (e) {
+                    // If not valid JSON, keep as is but count as error
+                    errorCount++;
+                  }
+                }
+                return newRow;
+              });
+
+              if (originalFileType === "csv") {
+                updatedFileContent = Papa.unparse(updatedRows);
+              } else {
+                const ws = XLSX.utils.json_to_sheet(updatedRows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+                updatedFileContent = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+              }
+
+              downloadBtn.style.display = "";
+              setStatus(`Updated ${successCount} items. ${errorCount > 0 ? `${errorCount} items failed JSON validation.` : "All items minified."}`, "success");
+              
+              if (window.showModal) {
+                showModal({
+                  title: "Update Complete",
+                  message: `Successfully processed column <strong>${col}</strong>.`,
+                  type: errorCount > 0 ? "info" : "success"
+                });
+              }
+            } catch (err) {
+              setStatus(err.message, "error");
+            }
+          });
+
+          downloadBtn.addEventListener("click", () => {
+            let blob;
+            let ext = originalFileType;
+            if (originalFileType === "csv") {
+              blob = new Blob([updatedFileContent], { type: "text/csv;charset=utf-8;" });
+            } else {
+              blob = new Blob([updatedFileContent], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            }
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = (nameInput.value || "updated_file") + "." + ext;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          });
+        })();
 
         if (window.lucide) window.lucide.createIcons();
       })();
